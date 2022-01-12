@@ -36,7 +36,7 @@ RUN apt-get update && apt-get install -y  \
   alsa-utils i2c-tools pcl-tools libssl-dev mesa-utils nmap swig pulseaudio libpulse-dev libudev-dev \
   libxslt-dev libxml2-dev rsync \
   festival festvox-don festvox-us-slt-hts festvox-rablpc16k festvox-kallpc16k festvox-kdlpc16k \
-  libttspico-utils espeak flite \
+  libttspico-utils espeak flite flac \
   teensy-loader-cli libncurses5 arduino arduino-builder \
   ir-keytable libinput-tools
 
