@@ -3,7 +3,8 @@ FROM ros:noetic@sha256:3502680140f44f7d6e0f5d06694a932b440166eaaae3a7bb845979037
 SHELL ["/bin/bash", "-c"]
 
 # Ros packages
-RUN apt-get update && apt-get install -y \
+RUN apt-get update
+RUN apt-get install -y \
       ros-noetic-desktop \
       python3-rosdep \
       python3-rosinstall \
@@ -12,10 +13,6 @@ RUN apt-get update && apt-get install -y \
 
 # Utils
 RUN apt-get install -y wget vim keychain tree screen git software-properties-common feh
-
-# x2go
-RUN add-apt-repository ppa:x2go/stable && \
-  apt-get install -y openssh-server x2goserver x2goserver-xsession
   
 #  Openvino dependencies
 RUN apt-get install -y build-essential \
@@ -32,37 +29,56 @@ RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/nul
   apt-cache policy cmake-curses-gui && \
   apt-get install -y cmake=3.20.2-0kitware1ubuntu20.04.1 cmake-data=3.20.2-0kitware1ubuntu20.04.1 cmake-curses-gui=3.20.2-0kitware1ubuntu20.04.1
 
+# other dependencies
+RUN apt-get update && apt-get install -y  \
+  usbutils pulseaudio-utils lame mpg123 audacity libfftw3-dev libconfig-dev libasound2-dev portaudio19-dev \
+  libprotobuf-dev protobuf-compiler libtbb-dev libusb-1.0-0-dev \
+  alsa-utils i2c-tools pcl-tools libssl-dev mesa-utils nmap swig pulseaudio libpulse-dev libudev-dev \
+  libxslt-dev libxml2-dev rsync \
+  festival festvox-don festvox-us-slt-hts festvox-rablpc16k festvox-kallpc16k festvox-kdlpc16k \
+  libttspico-utils espeak flite \
+  teensy-loader-cli libncurses5 arduino arduino-builder \
+  ir-keytable libinput-tools
+
+# More ros libs
+RUN apt-get install -y \
+  ros-noetic-imu-filter-madgwick ros-noetic-rtabmap-ros ros-noetic-robot-localization \
+  ros-noetic-vision-msgs ros-noetic-sensor-msgs \
+  ros-noetic-sound-play ros-noetic-audio-play \
+  ros-noetic-speech-recognition-msgs ros-noetic-audio-capture \
+  ros-noetic-image-proc ros-noetic-rviz ros-noetic-realsense2-camera \
+  ros-noetic-app-manager ros-noetic-catkin-virtualenv \
+  ros-noetic-rosserial-python ros-noetic-rosserial-arduino ros-noetic-rosserial-client
+
 # nodejs & vue
 RUN curl -fsSL https://deb.nodesource.com/setup_15.x | sudo -E bash - && \
   apt-get install -y nodejs && \
   npm install -g @vue/cli
 
-# other dependencies
-RUN apt-get update && apt-get install -y ros-noetic-rosserial-python \
-  usbutils pulseaudio-utils lame mpg123 audacity libfftw3-dev libconfig-dev libasound2-dev portaudio19-dev \
-  libprotobuf-dev protobuf-compiler libtbb-dev ros-noetic-realsense2-camera libusb-1.0-0-dev \
-  alsa-utils i2c-tools pcl-tools libssl-dev mesa-utils nmap swig pulseaudio libpulse-dev libudev-dev \
-  libxslt-dev libxml2-dev rsync
+# Not pretty but ensure gpio, i2c groups exist and have same GIDs as on the host
+RUN groupadd -g 997 gpio \
+    && groupadd -g 999 spi \
+    && groupmod -g 998 i2c
 
-RUN apt-get install -y \
-  ros-noetic-imu-filter-madgwick ros-noetic-rtabmap-ros ros-noetic-robot-localization \
-  ros-noetic-vision-msgs ros-noetic-sensor-msgs \
-  ros-noetic-sound-play ros-noetic-audio-play ros-noetic-respeaker-ros \
-  ros-noetic-speech-recognition-msgs ros-noetic-audio-capture \
-  ros-noetic-image-proc ros-noetic-rviz \
-  ros-noetic-app-manager ros-noetic-catkin-virtualenv \
-  festival festvox-don festvox-us-slt-hts festvox-rablpc16k festvox-kallpc16k festvox-kdlpc16k \
-  libttspico-utils espeak flite
-
-# create user
-RUN groupadd -r -g 1001 dgorissen && useradd -ms /bin/bash -u 1001 -g 1001 dgorissen && \
+# Create user ensuring same uid as host
+RUN groupadd -r -g 1001 dgorissen && \
+  useradd -ms /bin/bash -u 1001 -g 1001 dgorissen && \
   usermod -a -G users dgorissen && \
   usermod -a -G dialout dgorissen && \
   usermod -a -G audio dgorissen && \
   usermod -a -G video dgorissen && \
   usermod -a -G i2c dgorissen && \
-  usermod -a -G sudo dgorissen
+  usermod -a -G gpio dgorissen && \
+  usermod -a -G spi dgorissen && \
+  usermod -a -G sudo dgorissen && \
+  # TODO input group on the host ends up as systemd-network group inside...
+  # Needed for access to the IR
+  usermod -a -G systemd-network dgorissen
+
 RUN echo 'dgorissen:test' | chpasswd
+
+# Enable passwordless sudo
+RUN echo '%dgorissen ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 USER dgorissen
 WORKDIR /home/dgorissen
@@ -100,7 +116,53 @@ eval "$(pyenv init --path)" \n\
 RUN python -m pip install --upgrade pip
 RUN pip install wheel
 RUN pip install numpy
+RUN pip install scipy matplotlib
 
+# install mimic
+RUN git clone https://github.com/MycroftAI/mimic.git 
+RUN cd mimic && \
+  ./autogen.sh && \
+  ./configure --prefix="/usr/local" && \
+  make -j 2
+
+USER root
+RUN cd mimic && make install
+USER dgorissen
+
+RUN READTHEDOCS=True pip install picamera
+RUN pip install \
+  imutils flask flask_cors pyyaml rospkg pyserial platformio \
+  netifaces pyopengl pyopengl_accelerate empy \
+  pyusb click pyaudio pydub rpi.gpio \
+  pocketsphinx webrtcvad respeaker hidapi speechrecognition \ 
+  requests-oauthlib lxml scikit-learn catkin-tools
+
+RUN pip install adafruit-extended-bus adafruit-circuitpython-bme680 \
+    adafruit-circuitpython-pca9685 adafruit-circuitpython-servokit \
+    rpi_ws281x adafruit-circuitpython-neopixel adafruit-blinka evdev \
+    adafruit-circuitpython-neopixel-spi
+
+# Insteall respeaker repos
+RUN git clone https://github.com/respeaker/usb_4_mic_array.git && \
+  git clone https://github.com/respeaker/pocketsphinx-data.git && \
+  git clone --depth 1 https://github.com/respeaker/pixel_ring.git && \
+  cd pixel_ring && \
+  pip install -e . && \
+  git clone https://github.com/introlab/odas.git && \
+  mkdir odas/build && \
+  cd odas/build && \
+  cmake .. && \
+  make -j 2
+
+RUN mkdir -p ~/catkin_ws/src && cd ~/catkin_ws/src && \
+  git clone https://github.com/jsk-ros-pkg/jsk_3rdparty.git && \
+  source /opt/ros/noetic/setup.bash && \
+  cd ~/catkin_ws && \
+  catkin config --init && \
+  catkin build respeaker_ros && \
+  make -C build/respeaker_ros install
+
+# Install realsense
 RUN git clone --depth 1 --branch v2.49.0 https://github.com/IntelRealSense/librealsense.git && \
   cd librealsense && \
   mkdir build  && cd build && \
@@ -121,19 +183,17 @@ RUN cd librealsense/build && \
   cmake .. \
   -DBUILD_PYTHON_BINDINGS=ON \
   -DPYTHON_EXECUTABLE=$(which python3) && \
-  make -j2
+  make -j1
 
 USER root
 RUN cd /home/dgorissen/librealsense/build && make install
 USER dgorissen
 
-RUN READTHEDOCS=True pip install picamera
-RUN pip install \
-  imutils flask flask_cors pyyaml rospkg pyserial platformio \
-  netifaces pyopengl pyopengl_accelerate empy \
-  pyusb click pyaudio pydub rpi.gpio \
-  pocketsphinx webrtcvad respeaker hidapi speechrecognition \ 
-  requests-oauthlib lxml scipy matplotlib scikit-learn catkin-tools
+# Install model zoo downloader
+RUN git clone --depth 1 https://github.com/openvinotoolkit/open_model_zoo && \
+  cd open_model_zoo/tools/model_tools && \
+  pip install -r requirements.in && \
+  python3 downloader.py --output_dir /home/dgorissen/openvino_models --name face-detection-retail-0004
 
 # Install openvino
 ARG vinodist=ubuntu20
@@ -149,68 +209,6 @@ RUN cd openvino && \
   mkdir build_samples && cd build_samples && \
   cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-march=armv7-a" ~/openvino/deployment_tools/inference_engine/samples/cpp && \
   make -j 2
-
-# Install model zoo downloader
-RUN git clone --depth 1 https://github.com/openvinotoolkit/open_model_zoo && \
-  cd open_model_zoo/tools/downloader && \
-  pip install -r requirements.in && \
-  python3 downloader.py --output_dir /home/dgorissen/openvino_models --name face-detection-retail-0004
-
-RUN git clone https://github.com/respeaker/usb_4_mic_array.git && \
-  git clone https://github.com/respeaker/pocketsphinx-data.git && \
-  git clone --depth 1 https://github.com/respeaker/pixel_ring.git && \
-  cd pixel_ring && \
-  pip install -e . && \
-  git clone https://github.com/introlab/odas.git && \
-  mkdir odas/build && \
-  cd odas/build && \
-  cmake .. && \
-  make -j 2
-
-RUN git clone https://github.com/MycroftAI/mimic.git 
-RUN cd mimic && \
-  ./autogen.sh && \
-  ./configure --prefix="/usr/local" && \
-  make -j 2
-
-USER root
-RUN cd mimic && make install
-RUN apt-get remove -y ros-noetic-respeaker-ros
-USER dgorissen
-
-RUN mkdir -p ~/catkin_ws/src && cd ~/catkin_ws/src && \
-  git clone https://github.com/jsk-ros-pkg/jsk_3rdparty.git && \
-  source /opt/ros/noetic/setup.bash && \
-  cd ~/catkin_ws && \
-  catkin config --init && \
-  catkin build respeaker_ros && \
-  make -C build/respeaker_ros install
-
-RUN pip install adafruit-extended-bus adafruit-circuitpython-bme680 \
-    adafruit-circuitpython-pca9685 adafruit-circuitpython-servokit \
-    rpi_ws281x adafruit-circuitpython-neopixel adafruit-blinka evdev
-
-USER root
-RUN apt-get install -y ir-keytable libinput-tools
-# Not pretty but ensure gpio, i2c groups exist and have same GIDs as on the host
-RUN groupadd -g 997 gpio \
-    && groupadd -g 999 spi \
-    && groupmod -g 998 i2c \
-    && usermod -a -G gpio dgorissen \
-    # TODO input group on the host ends up as systemd-network group inside...
-    # Needed for access to the IR
-    && usermod -a -G systemd-network dgorissen
-
-# Enable passwordless sudo
-RUN echo '%dgorissen ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-# For uploading to teensy
-RUN apt-get update && apt-get install -y teensy-loader-cli \
-  ros-noetic-rosserial-arduino ros-noetic-rosserial-client libncurses5 arduino arduino-builder
-
-RUN usermod -a -G spi dgorissen
-
-USER dgorissen
-RUN pip install adafruit-circuitpython-neopixel-spi
 
 RUN echo -e '\n### \n\
 source ~/openvino/bin/setupvars.sh \n\
@@ -230,4 +228,3 @@ EXPOSE 11311
 ENTRYPOINT ["/home/dgorissen/clare/entrypoint.sh"]
 # https://stackoverflow.com/questions/53543881/docker-run-pass-arguments-to-entrypoint
 CMD [""]
-
