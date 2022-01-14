@@ -1,4 +1,4 @@
-FROM ros:noetic@sha256:3502680140f44f7d6e0f5d06694a932b440166eaaae3a7bb8459790377f695b4
+FROM ros:noetic@sha256:e66897669f09dd7c3d68ea4c4fe34df26ca125964acb093d94837a7b2e1f8475
 
 SHELL ["/bin/bash", "-c"]
 
@@ -51,7 +51,7 @@ RUN apt-get install -y \
   ros-noetic-rosserial-python ros-noetic-rosserial-arduino ros-noetic-rosserial-client
 
 # nodejs & vue
-RUN curl -fsSL https://deb.nodesource.com/setup_15.x | sudo -E bash - && \
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - && \
   apt-get install -y nodejs && \
   npm install -g @vue/cli
 
@@ -87,7 +87,7 @@ WORKDIR /home/dgorissen
 RUN rosdep update
 
 # Set-up necessary Env vars for PyEnv
-ENV PYTHON_VERSION 3.7.10
+ENV PYTHON_VERSION 3.7.12
 ENV PYENV_ROOT /home/dgorissen/.pyenv
 ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 
@@ -163,7 +163,7 @@ RUN mkdir -p ~/catkin_ws/src && cd ~/catkin_ws/src && \
   make -C build/respeaker_ros install
 
 # Install realsense
-RUN git clone --depth 1 --branch v2.49.0 https://github.com/IntelRealSense/librealsense.git && \
+RUN git clone --depth 1 --branch v2.50.0 https://github.com/IntelRealSense/librealsense.git && \
   cd librealsense && \
   mkdir build  && cd build && \
   cmake .. \
@@ -198,9 +198,8 @@ RUN git clone --depth 1 https://github.com/openvinotoolkit/open_model_zoo && \
 # Install openvino
 ARG vinodist=ubuntu20
 # ARG vinodist=raspbian
-ARG vinofile=l_openvino_toolkit_runtime_${vinodist}_p_2021.4.582
-
-RUN wget https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4/${vinofile}.tgz && \
+ARG vinofile=l_openvino_toolkit_runtime_${vinodist}_p_2021.4.752
+RUN wget https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.2/${vinofile}.tgz && \
   tar -xf ${vinofile}.tgz && \
   mv ${vinofile} openvino
 

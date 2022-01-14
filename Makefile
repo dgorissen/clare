@@ -37,7 +37,6 @@ runpi:
 	docker run \
 	--rm \
 	-v ${clare_dir}:/home/dgorissen/clare \
-	-v ${HOME}/.Xauthority:/home/dgorissen/.Xauthority \
 	-h clare \
 	-p5000:5000 -p11311:11311 -p8080:8080 \
 	--device /dev/gpiomem \

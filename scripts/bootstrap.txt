@@ -1,5 +1,7 @@
 # Steps needeed to setup a fresh RPi4 ready to run the clare container
 
+Using the screen configurator rotate screen by 90 degrees
+
 In raspi-config enable:
   serial, i2c, camera, vnc, spi
   opengl: "7. Advanced Options" – "A8 GL Driver" – "G2 GL (Fake KMS)"
