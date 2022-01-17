@@ -136,6 +136,14 @@
               <b-form-input id="right-arm-angle" v-model="right_arm_angle" type="range" min="0" max="180"></b-form-input>
             </div>
             <div>
+              <label for="neck-z-angle">Neck z/up/down: {{ neck_z_angle }}</label>
+              <b-form-input id="neck-z-angle" v-model="neck-z-angle" type="range" min="0" max="180"></b-form-input>
+            </div>
+            <div>
+              <label for="neck-y-angle">Neck y/left/right: {{ neck_y_angle }}</label>
+              <b-form-input id="neck-y-angle" v-model="neck-y-angle" type="range" min="0" max="180"></b-form-input>
+            </div>
+            <div>
               <b-form-select v-model="lightring_val" :options="lightring_vals"></b-form-select>
             </div>
           <p />
@@ -209,6 +217,8 @@ export default {
       voice_ready: true,
       left_arm_angle: 0,
       right_arm_angle: 0,
+      neck_z_angle: 0,
+      neck_y_angle: 0,
       lightring_val: "",
       lightring_vals: [],
     };
@@ -241,6 +251,14 @@ export default {
     right_arm_angle: function (val) {
       console.log(val);
       this.moveArms(); 
+    },
+    neck_z_angle: function (val) {
+      console.log(val);
+      this.moveNeck(); 
+    },
+    neck_y_angle: function (val) {
+      console.log(val);
+      this.moveNeck(); 
     },
     connected: function (val) {
       if(val) {
@@ -332,6 +350,16 @@ export default {
     moveArms: function() {
        axios
         .get(api + "/body/move_arms?l=" + this.left_arm_angle + "&r=" + this.right_arm_angle)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    moveNeck: function() {
+       axios
+        .get(api + "/body/move_neck?z=" + this.neck_z_angle + "&y=" + this.neck_y_angle)
         .then((res) => {
           console.log(res);
         })

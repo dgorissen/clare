@@ -1,2 +1,9 @@
 float32 shoulder_left_angle
 float32 shoulder_right_angle
+float32 elbow_left_angle
+float32 elbow_right_angle
+float32 wrist_left_angle
+float32 wrist_right_angle
+float32 wrist_rotate_angle
+float32 gripper_angle
+

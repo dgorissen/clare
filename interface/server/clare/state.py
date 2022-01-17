@@ -8,6 +8,7 @@ from threading import Thread
 from std_msgs.msg import String
 from diagnostic_msgs.msg import KeyValue
 from clare_arms.msg import ArmMovement
+from clare_neck.msg import NeckMovement
 from clare_fan.msg import FanControl
 from clare_lightring.msg import LightRingMessage
 from clare_env.msg import BME680Message
@@ -137,6 +138,7 @@ class ClareTop(BaseState):
         super(ClareTop, self).__init__()
 
         self._arm_pub = rospy.Publisher("/clare/arms", ArmMovement, queue_size=10)
+        self._neck_pub = rospy.Publisher("/clare/neck", NeckMovement, queue_size=10)
         self._fan_pub = rospy.Publisher("/clare/fan", FanControl, queue_size=10)
         self._lightring_pub = rospy.Publisher("/clare/lightring", LightRingMessage, queue_size=10)
         rospy.Subscriber("/clare/buttons", KeyValue, self.button_cb)
@@ -148,6 +150,12 @@ class ClareTop(BaseState):
         m.shoulder_left_angle = left
         m.shoulder_right_angle = right
         self._arm_pub.publish(m)
+
+    def set_neck(self, z, y):
+        m = NeckMovement()
+        m.z_angle = z
+        m.y_angle = y
+        self._neck_pub.publish(m)
 
     def set_fan(self, state, dur):
         m = FanControl()

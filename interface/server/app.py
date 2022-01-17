@@ -233,6 +233,13 @@ def move_arms():
     STATE.top.set_arms(l, r)
     return "", 200
 
+@app.route("/body/move_neck")
+def move_neck():
+    z = request.args.get('z', default=0, type=int)
+    y = request.args.get('y', default=0, type=int)
+    STATE.top.set_neck(z, y)
+    return "", 200
+
 @app.route("/body/fan/<state>")
 def set_fan(state):
     s = True if state == "on" else False

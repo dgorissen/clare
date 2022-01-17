@@ -43,6 +43,9 @@
     <node name="clare_arms" pkg="clare_arms" type="arms_node.py">
         <param name="i2c_bus" value="3"/>
     </node>
+    <node name="clare_neck" pkg="clare_neck" type="neck_node.py">
+        <param name="i2c_bus" value="3"/>
+    </node>
     <node name="clare_fan" pkg="clare_fan" type="fan_node.py"/>
     <node name="clare_env" pkg="clare_env" type="env_node.py">
         <param name="i2c_bus" value="3"/>
