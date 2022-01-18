@@ -137,11 +137,11 @@
             </div>
             <div>
               <label for="neck-z-angle">Neck z/up/down: {{ neck_z_angle }}</label>
-              <b-form-input id="neck-z-angle" v-model="neck-z-angle" type="range" min="0" max="180"></b-form-input>
+              <b-form-input id="neck-z-angle" v-model="neck_z_angle" type="range" min="0" max="180"></b-form-input>
             </div>
             <div>
               <label for="neck-y-angle">Neck y/left/right: {{ neck_y_angle }}</label>
-              <b-form-input id="neck-y-angle" v-model="neck-y-angle" type="range" min="0" max="180"></b-form-input>
+              <b-form-input id="neck-y-angle" v-model="neck_y_angle" type="range" min="0" max="180"></b-form-input>
             </div>
             <div>
               <b-form-select v-model="lightring_val" :options="lightring_vals"></b-form-select>
