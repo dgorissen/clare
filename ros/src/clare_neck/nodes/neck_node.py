@@ -23,7 +23,7 @@ class NeckController(object):
 
     def set_neck_pos(self, z, y):
         # Respect physical limits
-        if (50 <= z <= 100) and (0 <= y <= 180):
+        if (25 <= z <= 100) and (0 <= y <= 150):
             # Make servo's rotate in the same direction (mirror image mount)
             self._servokit.servo[12].angle = z
             self._servokit.servo[13].angle = y
