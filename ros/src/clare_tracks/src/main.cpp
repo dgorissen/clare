@@ -17,6 +17,7 @@
 #include <clare_tracks/EncoderMessage.h>
 #include <clare_tracks/JoystickInput.h>
 #include <clare_tracks/MotorSpeeds.h>
+#include <clare_tracks/RCCommandMessage.h>
 
 // Fwd declarations
 void set_headlights(bool b);
@@ -36,9 +37,11 @@ ros::Subscriber<std_msgs::Bool> headlight_sub("clare/tracks/headlights", headlig
 
 clare_tracks::EncoderMessage encoder_msg;
 clare_tracks::MotorSpeeds motor_msg;
+clare_tracks::RCCommandMessage rc_msg;
 
 ros::Publisher encoder_pub("clare/tracks/encoders", &encoder_msg);
 ros::Publisher motor_pub("clare/tracks/motor_speeds", &motor_msg);
+ros::Publisher rc_pub("clare/tracks/rc_commands", &rc_msg);
 
 // State
 clare_tracks::JoystickInput cur_input_cmd;
@@ -392,11 +395,21 @@ void rc_mode(){
 
 		mode_switch_val = ch5;
 
+		// Engage motors
 		int vL = -999;
 		int vR = -999;
 		set_motor_speeds(ch4, ch1, vL, vR);
+
 		// Publish state
 		publish_motor_state(vL, vR, RC_CONTROL);
+
+		// Publish RC commands
+		rc_msg.ch1 = ch1;
+		rc_msg.ch2 = ch2;
+		rc_msg.ch3 = ch3;
+		rc_msg.ch4 = ch4;
+		rc_msg.ch5 = ch5;
+		rc_pub.publish(rc_msg);
 	}
   } else {
 	  Log.trace("Failed to read a good RC packet");
