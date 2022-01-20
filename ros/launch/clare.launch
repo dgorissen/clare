@@ -51,6 +51,10 @@
         <param name="i2c_bus" value="3"/>
     </node>
     <node name="clare_lightring" pkg="clare_lightring" type="lightring_node.py"/>
+    <node name="clare_tts" pkg="clare_tts" type="tts_node.py">
+        <env name="ALSA_CARD" value="1"/>
+        <param name="backend" value="gtts"/>
+    </node>
 
     <!-- TRACKS =========================================================================== -->
     <node name="clare_tracks" pkg="rosserial_python" type="serial_node.py">

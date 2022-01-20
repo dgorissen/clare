@@ -141,6 +141,7 @@ class ClareTop(BaseState):
         self._neck_pub = rospy.Publisher("/clare/neck", NeckMovement, queue_size=10)
         self._fan_pub = rospy.Publisher("/clare/fan", FanControl, queue_size=10)
         self._lightring_pub = rospy.Publisher("/clare/lightring", LightRingMessage, queue_size=10)
+        self._tts_pub = rospy.Publisher("/clare/tts", String, queue_size=10)
         rospy.Subscriber("/clare/buttons", KeyValue, self.button_cb)
         rospy.Subscriber("/clare/env", BME680Message, self.env_cb)
         rospy.Subscriber("/clare/ir", String, self.ir_cb)
@@ -168,6 +169,9 @@ class ClareTop(BaseState):
         m.pattern = pat
         self._lightring_pub.publish(m)
     
+    def speak(self, txt):
+        self._tts_pub.publish(txt)
+
     def env_cb(self, msg):
         keys = "gas,humidity,pressure,altitude,temp".split(",")
         for k in keys:

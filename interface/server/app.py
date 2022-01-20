@@ -158,18 +158,13 @@ def usb_devices():
     return shell_cmd(["lsusb"])
 
 @app.route("/voice/speak")
+@is_connected
 def speak():
     tts = request.args.get('tts', default="", type=str)
     # No naughty strings
     tts = re.sub(r'[^0-9a-zA-Z ]+', '', tts)
-
-    if tts:
-        cmd = f"ALSA_CARD=Headphones festival -b '(voice_cmu_us_slt_arctic_hts)' '(SayText \"{tts}\")'"
-        # unmute()
-        return shell_cmd(cmd)
-        # mute()
-    else:
-        return "", 200
+    STATE.top.speak(tts)
+    return "", 200
 
 @app.route("/<source>/stream")
 @is_connected
