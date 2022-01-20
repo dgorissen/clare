@@ -209,12 +209,20 @@ RUN cd openvino && \
   cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-march=armv7-a" ~/openvino/deployment_tools/inference_engine/samples/cpp && \
   make -j 2
 
+# TODO: new commands, to be merged into the above at next upgrade
+USER root
+RUN apt-get install -y libgirepository1.0-dev
+USER dgorissen
+RUN pip install gobject PyGObject playsound
+RUN pip install gtts
+
 RUN echo -e '\n### \n\
 source ~/openvino/bin/setupvars.sh \n\
 source /opt/ros/noetic/setup.bash \n\
 source ~/catkin_ws/install/setup.bash \n\
 source ~/clare/ros/devel/setup.bash \n\
 export POCKETSPHINX_DATA=$HOME/pocketsphinx-data \n\
+export ALSA_CARD=1 \n\
 ' >> ~/.bashrc
 
 RUN mkdir ~/clare
