@@ -1,2 +1,3 @@
-float32 z_angle
-float32 y_angle
+# in logical coordinates 0-100
+float32 z
+float32 y

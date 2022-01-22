@@ -222,20 +222,23 @@ def make_stream(msg_name, state_getter):
     return _stream
 
 @app.route("/body/move_arms")
+@is_connected
 def move_arms():
-    l = request.args.get('l', default=0, type=int)
-    r = request.args.get('r', default=0, type=int)
+    l = request.args.get('l', default=-1, type=int)
+    r = request.args.get('r', default=-1, type=int)
     STATE.top.set_arms(l, r)
     return "", 200
 
 @app.route("/body/move_neck")
+@is_connected
 def move_neck():
-    z = request.args.get('z', default=0, type=int)
-    y = request.args.get('y', default=0, type=int)
+    z = request.args.get('z', default=-1, type=int)
+    y = request.args.get('y', default=-1, type=int)
     STATE.top.set_neck(z, y)
     return "", 200
 
 @app.route("/body/fan/<state>")
+@is_connected
 def set_fan(state):
     s = True if state == "on" else False
     d = request.args.get('dur', default=3, type=int)
@@ -243,6 +246,7 @@ def set_fan(state):
     return "", 200
 
 @app.route("/body/lightring")
+@is_connected
 def read_env():
     p = request.args.get('pat', default="rainbow", type=str)
     STATE.top.set_lightring(p)

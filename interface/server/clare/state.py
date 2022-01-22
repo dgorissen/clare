@@ -148,14 +148,14 @@ class ClareTop(BaseState):
 
     def set_arms(self, left, right):
         m = ArmMovement()
-        m.shoulder_left_angle = left
-        m.shoulder_right_angle = right
+        m.shoulder_left = left
+        m.shoulder_right = right
         self._arm_pub.publish(m)
 
     def set_neck(self, z, y):
         m = NeckMovement()
-        m.z_angle = z
-        m.y_angle = y
+        m.z = z
+        m.y = y
         self._neck_pub.publish(m)
 
     def set_fan(self, state, dur):

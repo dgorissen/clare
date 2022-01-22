@@ -5,33 +5,32 @@ import rospy
 from std_msgs.msg import String
 from adafruit_extended_bus import ExtendedI2C as I2C
 from clare_neck.msg import NeckMovement
+from clare_common.utils import ServoController
 from adafruit_servokit import ServoKit
 
 
-class NeckController(object):
+class NeckController(ServoController):
     def __init__(self):
         super(NeckController, self).__init__()
 
         rospy.init_node("clare_neck", anonymous=False, disable_signals=False)
-        i2c_bus = rospy.get_param("~i2c_bus", 3)
+        
+        self._servo_map = {
+            # index, limits, mapper_fcn
+            "z": [14, [36, 90],  None],
+            "y": [13, [36, 144],  None]
+        }    
 
-        # Setup servo connection
-        i2c = I2C(i2c_bus)
-        self._servokit = ServoKit(channels=16, i2c=i2c)
+        self._setup_servos()
+        self._neck_sub = rospy.Subscriber("clare/neck", NeckMovement, self._neck_callback)
 
-        self._arm_sub = rospy.Subscriber("clare/neck", NeckMovement, self._neck_callback)
-
-    def set_neck_pos(self, z, y):
-        # Respect physical limits
-        if (25 <= z <= 100) and (0 <= y <= 150):
-            # Make servo's rotate in the same direction (mirror image mount)
-            self._servokit.servo[12].angle = z
-            self._servokit.servo[13].angle = y
-        else:
-            rospy.logerr(f"Invalid neck position commanded, z/up/down: {z} y/left/right: {y}")
+    # Takes logical values, negative indicates None / ignore
+    def set_neck(self, z, y):
+        self.set_servo_logical("z", z)
+        self.set_servo_logical("y", y)
 
     def _neck_callback(self, msg):
-        self.set_neck_pos(msg.z_angle, msg.y_angle)
+        self.set_neck(msg.z, msg.y)
 
     def run(self):
         rospy.logdebug('Neck node ready and listening')
