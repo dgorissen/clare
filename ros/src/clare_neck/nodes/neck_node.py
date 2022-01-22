@@ -18,7 +18,7 @@ class NeckController(ServoController):
         self._servo_map = {
             # index, limits, mapper_fcn
             "z": [14, [36, 90],  None],
-            "y": [13, [36, 144],  None]
+            "y": [13, [46, 134],  None]
         }    
 
         self._setup_servos()
