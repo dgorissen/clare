@@ -211,10 +211,9 @@ RUN cd openvino && \
 
 # TODO: new commands, to be merged into the above at next upgrade
 USER root
-RUN apt-get install -y libgirepository1.0-dev
+RUN apt-get install -y libgirepository1.0-dev libgl1-mesa-glx ros-noetic-moveit-*
 USER dgorissen
-RUN pip install gobject PyGObject playsound
-RUN pip install gtts
+RUN pip install gobject PyGObject playsound gtts defusedxml
 
 RUN echo -e '\n### \n\
 source ~/openvino/bin/setupvars.sh \n\
