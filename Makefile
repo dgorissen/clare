@@ -33,6 +33,11 @@ else
 	--push .
 endif
 
+runosx:
+	docker run -p 6080:80 --shm-size=512m \
+	-v ${clare_dir}:/home/ubuntu/clare \
+	tiryoh/ros-desktop-vnc:noetic
+
 runpi:
 	docker run \
 	--rm \
