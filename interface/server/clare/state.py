@@ -146,10 +146,10 @@ class ClareTop(BaseState):
         rospy.Subscriber("/clare/env", BME680Message, self.env_cb)
         rospy.Subscriber("/clare/ir", String, self.ir_cb)
 
-    def set_arms(self, left, right):
+    def set_arms(self, dict):
         m = ArmMovement()
-        m.shoulder_left = left
-        m.shoulder_right = right
+        for k, v in dict.items():
+            setattr(m, k, v)
         self._arm_pub.publish(m)
 
     def set_neck(self, z, y):

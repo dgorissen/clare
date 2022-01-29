@@ -100,6 +100,11 @@ def connect():
 
     return ('Connected',200)
 
+@app.route("/disconnect")
+@is_connected
+def disconnect():
+    return ('Not implemented yet',500)
+
 @app.route("/tracks/headlights")
 @is_connected
 def headlights():
@@ -224,9 +229,10 @@ def make_stream(msg_name, state_getter):
 @app.route("/body/move_arms")
 @is_connected
 def move_arms():
-    l = request.args.get('l', default=-1, type=int)
-    r = request.args.get('r', default=-1, type=int)
-    STATE.top.set_arms(l, r)
+    d = request.args.to_dict()
+    for k, v in d.items():
+        d[k] = int(v)
+    STATE.top.set_arms(d)
     return "", 200
 
 @app.route("/body/move_neck")

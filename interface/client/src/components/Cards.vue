@@ -7,6 +7,13 @@
         variant="primary"
         >Connect</b-button
       >
+
+      <b-button
+        :disabled="!connected"
+        v-on:click="disconnect()"
+        variant="primary"
+        >Disconnect</b-button
+      >
     </b-row>
     <p />
 
@@ -128,20 +135,12 @@
           >
           <p />
             <div>
-              <label for="left-arm-angle">Left arm: {{ left_arm_angle }}</label>
-              <b-form-input id="left-arm-angle" v-model="left_arm_angle" type="range" min="0" max="100"></b-form-input>
-            </div>
-            <div>
-              <label for="right-arm-angle">Right arm: {{ right_arm_angle }}</label>
-              <b-form-input id="right-arm-angle" v-model="right_arm_angle" type="range" min="0" max="100"></b-form-input>
-            </div>
-            <div>
               <label for="neck-z-angle">Neck z/up/down: {{ neck_z_angle }}</label>
-              <b-form-input id="neck-z-angle" v-model="neck_z_angle" type="range" min="0" max="100"></b-form-input>
+              <b-form-input id="neck-z-angle" v-model="neck_z_angle" type="range" :value="neck_z_angle" min="0" max="100"></b-form-input>
             </div>
             <div>
               <label for="neck-y-angle">Neck y/left/right: {{ neck_y_angle }}</label>
-              <b-form-input id="neck-y-angle" v-model="neck_y_angle" type="range" min="0" max="100"></b-form-input>
+              <b-form-input id="neck-y-angle" v-model="neck_y_angle" type="range" :value="neck_y_angle" min="0" max="100"></b-form-input>
             </div>
             <div>
               <b-form-select v-model="lightring_val" :options="lightring_vals"></b-form-select>
@@ -149,6 +148,25 @@
           <p />
           <b-table stacked :items="[top_state]"></b-table>
           <p />
+        </b-card>
+      </b-col>
+
+      <b-col l="4">
+        <b-card
+            title="Arms"
+            img-src="../assets/img/arms.png"
+            img-alt="Image"
+            img-top
+            tag="article"
+            style="max-width: 20rem"
+            class="mb-2"
+          >
+          <b-card-text>Arms actions</b-card-text>
+          <p />
+          <div v-for="(val, name) in arm_servos" :key="name">
+            <label :for="name">{{ name }}: {{ val }}</label>
+            <b-form-input :id="name" v-model="arm_servos[name]" type="range" :value="val" min="-1" max="100"></b-form-input>
+          </div>
         </b-card>
       </b-col>
 
@@ -205,6 +223,19 @@ function closeEventSources() {
 
 export default {
   data() {
+    let arm_servos = {
+        sh_left_fb: 10,
+         sh_right_fb: 10,
+         sh_left_ud: 25,
+         sh_right_ud: 25,
+         el_left: -1,
+         el_right: -1,
+         wr_left: -1,
+         wr_right: -1,
+         gr_left: -1,
+         gr_right: -1
+    };
+
     return {
       headlights: false,
       connected: null,
@@ -215,10 +246,9 @@ export default {
       tts_input: "Hello my cute bunny",
       stt_output: "",
       voice_ready: true,
-      left_arm_angle: 0,
-      right_arm_angle: 0,
-      neck_z_angle: 0,
-      neck_y_angle: 0,
+      arm_servos: arm_servos,
+      neck_z_angle: 50,
+      neck_y_angle: 50,
       lightring_val: "",
       lightring_vals: [],
     };
@@ -244,13 +274,11 @@ export default {
           console.log(err);
         });
     },
-    left_arm_angle: function (val) {
-      console.log(val);
-      this.moveArms(); 
-    },
-    right_arm_angle: function (val) {
-      console.log(val);
-      this.moveArms(); 
+    arm_servos: {
+      handler: function (val) {
+        this.moveArms(val); 
+      },
+      deep: true
     },
     neck_z_angle: function (val) {
       console.log(val);
@@ -312,6 +340,17 @@ export default {
           console.log(err);
         });
     },
+    disconnect: function () {
+      axios
+        .get(api + "/disconnect")
+        .then((res) => {
+          this.connected = false;
+          console.log("Connected: " + res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     controlTracks: _.throttle( (x, y) => {
         console.log(x,y);
         axios
@@ -319,7 +358,7 @@ export default {
           .catch((err) => {
             console.log(err);
           });
-    },300),
+    }, 300),
     headlightActionStr: function () {
       return this.headlights ? "off" : "on";
     },
@@ -347,16 +386,19 @@ export default {
           console.log(err);
         });
     },
-    moveArms: function() {
+    moveArms: _.throttle( (vals) => {
+       // Ignore -1 values
+       let filtered = Object.entries(vals).filter( x => x[1] > 0 );
+       const params = new URLSearchParams(filtered).toString(); 
        axios
-        .get(api + "/body/move_arms?l=" + this.left_arm_angle + "&r=" + this.right_arm_angle)
+        .get(api + "/body/move_arms?" + params)
         .then((res) => {
           console.log(res);
         })
         .catch((err) => {
           console.log(err);
         });
-    },
+    }, 100),
     moveNeck: function() {
        axios
         .get(api + "/body/move_neck?z=" + this.neck_z_angle + "&y=" + this.neck_y_angle)
