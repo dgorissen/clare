@@ -23,7 +23,7 @@ class ArmsController(ServoController):
             "wr_left":     [5, [0, 180], None],
             "wr_right":    [8, [0, 180], None],
             "gr_left": [6, [50, 93], None],
-            "gr_right": [11, [50, 93], None]
+            "gr_right": [11, [50, 90], None]
         }    
 
         self._setup_servos()

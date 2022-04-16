@@ -227,13 +227,13 @@ export default {
         sh_left_fb: 10,
          sh_right_fb: 10,
          sh_left_ud: 27,
-         sh_right_ud: 25,
+         sh_right_ud: 30,
          el_left: 43,
-         el_right: 52,
+         el_right: 46,
          wr_left: 0,
-         wr_right: -1,
-         gr_left: 52,
-         gr_right: -1
+         wr_right: 2,
+         gr_left: 100,
+         gr_right: 100
     };
 
     return {
