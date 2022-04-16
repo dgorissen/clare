@@ -130,3 +130,9 @@ curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core/master/s
 # Note:
 # if docker img does not build on the pi because of key problems with apt, see
 # https://askubuntu.com/questions/1263284/apt-update-throws-signature-error-in-ubuntu-20-04-container-on-arm
+
+
+# install ros (assuming no pkgs for raspi)
+https://wiki.ros.org/noetic/Installation/Source
+
+
