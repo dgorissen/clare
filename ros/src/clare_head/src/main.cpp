@@ -4,13 +4,12 @@
 
 Face face = Face(0, 1, 2, 3);
 
-void face_setup() {
+void setup() {
   Serial.begin(9600);
   face.reset();
 }
 
-void face_loop() {
-  while (true) {
+void loopEmotions(){
     face.happy();
     delaySeconds(2);
     face.sad();
@@ -27,5 +26,10 @@ void face_loop() {
     delaySeconds(2);
     face.kiss();
     delaySeconds(2);
+}
+
+void loop() {
+  while (true) {
+    loopEmotions();
   }
 }
