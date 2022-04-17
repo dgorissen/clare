@@ -96,3 +96,9 @@ middle_build:
 
 middle_upload:
 	make -C ros/src/clare_middle upload
+
+head_build:
+	make -C ros/src/clare_head build
+
+head_upload:
+	make -C ros/src/clare_head upload
