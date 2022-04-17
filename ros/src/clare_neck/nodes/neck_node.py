@@ -16,8 +16,8 @@ class NeckController(ServoController):
         rospy.init_node("clare_neck", anonymous=False, disable_signals=False)
         
         self._servo_map = {
-            "z": ServoJoint(14, [36, 90]),
-            "y": ServoJoint(13, [46, 134])
+            "z": ServoJoint(14, [36, 90], neutral_pos=63),
+            "y": ServoJoint(13, [46, 134], neutral_pos=96)
         }
 
         self._setup_servos()
