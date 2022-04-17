@@ -168,9 +168,9 @@
             >Reset to Neutral</b-button
           >
           <p />
-          <div v-for="(val, name) in arm_servos" :key="name">
+          <div v-for="(val, name) in arm_joints" :key="name">
             <label :for="name">{{ name }}: {{ val }}</label>
-            <b-form-input :id="name" v-model="arm_servos[name]" type="range" :value="val" min="-1" max="100"></b-form-input>
+            <b-form-input :id="name" v-model="arm_joints[name]" type="range" :value="val" min="-1" max="100"></b-form-input>
           </div>
         </b-card>
       </b-col>
@@ -229,7 +229,7 @@ function closeEventSources() {
 export default {
   data() {
     // TODO duplication of initial position values
-    let arm_servos = {
+    let arm_joints = {
         sh_fb_left: 10,
          sh_fb_right: 10,
          sh_ud_left: 27,
@@ -252,7 +252,7 @@ export default {
       tts_input: "Hello my cute bunny",
       stt_output: "",
       voice_ready: true,
-      arm_servos: arm_servos,
+      arm_joints: arm_joints,
       neck_z_angle: 50,
       neck_y_angle: 50,
       lightring_val: "",
@@ -280,7 +280,7 @@ export default {
           console.log(err);
         });
     },
-    arm_servos: {
+    arm_joints: {
       handler: function (val) {
         this.moveArms(val); 
       },
