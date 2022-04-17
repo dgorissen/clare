@@ -8,6 +8,7 @@ from threading import Thread
 from std_msgs.msg import String
 from diagnostic_msgs.msg import KeyValue
 from clare_arms.msg import ArmMovement
+from clare_arms.srv import ArmsToNeutral
 from clare_neck.msg import NeckMovement
 from clare_fan.msg import FanControl
 from clare_lightring.msg import LightRingMessage
@@ -145,7 +146,14 @@ class ClareTop(BaseState):
         rospy.Subscriber("/clare/buttons", KeyValue, self.button_cb)
         rospy.Subscriber("/clare/env", BME680Message, self.env_cb)
         rospy.Subscriber("/clare/ir", String, self.ir_cb)
+        rospy.Subscriber("/clare/arms/cur_position", ArmMovement, self.arm_cb)
+        
+        self.reset_arms_service = rospy.ServiceProxy('/clare/arms/arms_to_neutral', ArmsToNeutral)
 
+    def reset_arms(self):
+        res = self.reset_arms_service()
+        return res
+  
     def set_arms(self, dict):
         m = ArmMovement()
         for k, v in dict.items():
@@ -176,6 +184,11 @@ class ClareTop(BaseState):
         keys = "gas,humidity,pressure,altitude,temp".split(",")
         for k in keys:
             self._state[k] = getattr(msg, k)
+        self.update_ts_to_now()
+
+    def arm_cb(self, msg):
+        for k,v in ArmMovement.__dict__().items():
+            self._state[k] = msg.data
         self.update_ts_to_now()
 
     def ir_cb(self, msg):

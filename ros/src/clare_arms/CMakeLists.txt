@@ -15,6 +15,11 @@ add_message_files(
    ArmMovement.msg
 )
 
+add_service_files(
+  FILES
+  ArmsToNeutral.srv
+)
+
 generate_messages(
   DEPENDENCIES
   std_msgs

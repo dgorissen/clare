@@ -162,6 +162,11 @@
             class="mb-2"
           >
           <b-card-text>Arms actions</b-card-text>
+          <b-button
+            v-on:click="resetArms()"
+            variant="primary"
+            >Reset to Neutral</b-button
+          >
           <p />
           <div v-for="(val, name) in arm_servos" :key="name">
             <label :for="name">{{ name }}: {{ val }}</label>
@@ -223,11 +228,12 @@ function closeEventSources() {
 
 export default {
   data() {
+    // TODO duplication of initial position values
     let arm_servos = {
-        sh_left_fb: 10,
-         sh_right_fb: 10,
-         sh_left_ud: 27,
-         sh_right_ud: 30,
+        sh_fb_left: 10,
+         sh_fb_right: 10,
+         sh_ud_left: 27,
+         sh_ud_right: 30,
          el_left: 43,
          el_right: 46,
          wr_left: 0,
@@ -399,6 +405,16 @@ export default {
           console.log(err);
         });
     }, 100),
+    resetArms: function () {
+      axios
+        .get(api + "/body/arms/reset")
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     moveNeck: function() {
        axios
         .get(api + "/body/move_neck?z=" + this.neck_z_angle + "&y=" + this.neck_y_angle)

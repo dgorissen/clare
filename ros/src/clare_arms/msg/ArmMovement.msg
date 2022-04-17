@@ -1,7 +1,7 @@
-float32 sh_left_fb
-float32 sh_right_fb
-float32 sh_left_ud
-float32 sh_right_ud
+float32 sh_fb_left
+float32 sh_fb_right
+float32 sh_ud_left
+float32 sh_ud_right
 float32 el_left
 float32 el_right
 float32 wr_left

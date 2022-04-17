@@ -235,6 +235,12 @@ def move_arms():
     STATE.top.set_arms(d)
     return "", 200
 
+@app.route("/body/arms/reset")
+@is_connected
+def reset_arms():
+    STATE.top.reset_arms()
+    return "", 200
+
 @app.route("/body/move_neck")
 @is_connected
 def move_neck():

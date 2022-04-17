@@ -5,7 +5,7 @@ import rospy
 from std_msgs.msg import String
 from adafruit_extended_bus import ExtendedI2C as I2C
 from clare_neck.msg import NeckMovement
-from clare_common.utils import ServoController
+from clare_common.utils import ServoController, ServoJoint
 from adafruit_servokit import ServoKit
 
 
@@ -16,10 +16,9 @@ class NeckController(ServoController):
         rospy.init_node("clare_neck", anonymous=False, disable_signals=False)
         
         self._servo_map = {
-            # index, limits, mapper_fcn
-            "z": [14, [36, 90],  None],
-            "y": [13, [46, 134],  None]
-        }    
+            "z": ServoJoint(14, [36, 90]),
+            "y": ServoJoint(13, [46, 134])
+        }
 
         self._setup_servos()
         self._neck_sub = rospy.Subscriber("clare/neck", NeckMovement, self._neck_callback)
