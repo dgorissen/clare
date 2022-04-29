@@ -909,3 +909,35 @@ void Face::kiss(){
     smileEyes();
     kissMouth();
 }
+
+void Face::setExpression(const char* ex){
+	switch (ex)
+	{
+	case "happy":
+		this.happy();
+		break;
+	case "sad":
+		this.dad();
+		break;
+	case "angry":
+		this.angry();
+		break;
+	case "silly":
+		this.silly();
+		break;
+	case "surprised":
+		this.surprised();
+		break;
+	case "ugh":
+		this.ugh();
+		break;
+	case "confused":
+		this.confused();
+		break;
+	case "kiss":
+		this.kiss();
+		break;
+	default:
+		break;
+	}
+}

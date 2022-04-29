@@ -57,6 +57,8 @@ class Face {
         void ugh();
         void confused();
         void kiss();
+
+        void setExpression(const char* ex);
 };
 
 #endif
