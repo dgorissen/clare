@@ -1,23 +1,12 @@
 #ifndef FACE_H
 #define FACE_H
 
-#include "LedControl.h"
+#include "LedControl_SW_SPI.h"
 #include "ledmasks.h"
-
-
-/*
-pin 2 is connected to the DataIn
-pin 4 is connected to the CLK
-pin 3 is connected to LOAD
-*/
-const int DATA_IN_PIN = 2;
-const int CLK_PIN = 4;
-const int CS_PIN = 3;
-const int NUM_DEVICES = 4;
 
 class Face {
     private:
-        LedControl flc = LedControl(DATA_IN_PIN, CLK_PIN, CS_PIN, NUM_DEVICES);
+        LedControl_SW_SPI flc;
         int fleftEyeIdx = -1;
         int frightEyeIdx = -1;
         int fleftMouthIdx = -1;

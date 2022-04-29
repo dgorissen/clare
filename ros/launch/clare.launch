@@ -13,6 +13,11 @@
     -->
 
     <!-- HEAD =========================================================================== -->
+    <node name="clare_head" pkg="rosserial_python" type="serial_node.py">
+        <param name="port" value="/dev/ttyUSB2"/>
+        <param name="baud" value="115200"/>
+    </node>
+    
     <node name="clare_head_camera" pkg="clare_head_camera" type="face_detect_node.py">
         <param name="model_dir" value="/home/dgorissen/openvino_models/intel/" type="str" />
         <param name="model_name" value="face-detection-retail-0004" type="str" />

@@ -614,13 +614,26 @@ binaryArrayType binaryArray[61] =
 		B00000000,
 		B00000000
 	}	
-};		
+};
 
 Face::Face(int le, int re, int lm, int rm) {
-  fleftEyeIdx = le;
-  frightEyeIdx = re;
-  fleftMouthIdx = lm;
-  frightMouthIdx = rm;
+	fleftEyeIdx = le;
+	frightEyeIdx = re;
+	fleftMouthIdx = lm;
+	frightMouthIdx = rm;
+
+	/*
+	pin 2 is connected to the DataIn
+	pin 4 is connected to the CLK
+	pin 3 is connected to LOAD
+	*/
+	const int DATA_IN_PIN = 2;
+	const int CLK_PIN = 4;
+	const int CS_PIN = 3;
+	const int NUM_DEVICES = 4;
+
+	flc = LedControl_SW_SPI();
+	flc.begin(DATA_IN_PIN, CLK_PIN, CS_PIN, NUM_DEVICES);
 }
 
 void Face::reset() {
@@ -911,33 +924,23 @@ void Face::kiss(){
 }
 
 void Face::setExpression(const char* ex){
-	switch (ex)
-	{
-	case "happy":
-		this.happy();
-		break;
-	case "sad":
-		this.dad();
-		break;
-	case "angry":
-		this.angry();
-		break;
-	case "silly":
-		this.silly();
-		break;
-	case "surprised":
-		this.surprised();
-		break;
-	case "ugh":
-		this.ugh();
-		break;
-	case "confused":
-		this.confused();
-		break;
-	case "kiss":
-		this.kiss();
-		break;
-	default:
-		break;
+	if (ex == "happy") {
+		this->happy();
+	} else if (ex == "sad") {
+		this->sad();
+	} else if (ex == "angry") {
+		this->angry();
+	} else if (ex == "silly") {
+		this->silly();
+	} else if (ex == "surprised") {
+		this->surprised();
+	} else if (ex == "ugh") {
+		this->ugh();
+	} else if (ex == "confused") {
+		this->confused();
+	} else if (ex == "kiss") {
+		this->kiss();
+	} else {
+		// Ignore
 	}
 }

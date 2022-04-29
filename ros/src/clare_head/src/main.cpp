@@ -43,7 +43,7 @@ void setup() {
 }
 
 void face_callback(const clare_head::FaceMessage& face_msg){
-  const String expression  = face_msg.expression;
+  const char * expression  = face_msg.expression;
   face.setExpression(expression);
 }
 
