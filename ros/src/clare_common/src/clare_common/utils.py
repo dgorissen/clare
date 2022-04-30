@@ -4,6 +4,7 @@ from clare_arms.msg import ArmMovement
 from adafruit_servokit import ServoKit
 import time
 import numpy as np
+import math
 
 def make_interpolater(left_min, left_max, right_min, right_max): 
     # Figure out how 'wide' each range is  
@@ -21,7 +22,7 @@ def make_interpolater(left_min, left_max, right_min, right_max):
     return interp_fn
 
 class ServoJoint:
-    # All limits and positions are in phyical space
+    # All limits and positions are in physical space
     def __init__(self, index, limits=[0, 180], neutral_pos=0) -> None:
         self.index = index
         self.limits = limits
@@ -52,24 +53,45 @@ class ServoController(object):
             self._servokit.servo[idx].set_pulse_width_range(500,2500)
 
     # Interpolate between starting and ending positions
-    def _build_servo_sequence(self, start, end, toa, steps=50):
-        if start
-        angles = np.linsppace(start, end, num=steps)
-        times = toa / steps
+    def _build_servo_sequence(self, start, end):
+        # Split the interval into a fixed number of steps or according
+        # to a particular resolution
+        # I.e., no point in taking 40 steps in going from 5 degrees to 7
+        resolution = 0.2 # degrees
+        max_steps = 50
+        nres = abs(end - start) / resolution
+        steps = math.floor(min(max_steps, nres))
+
+        if steps < 1:
+            return []
+
+        # Speed to run at
+        v = 90/3 # degrees per second
+
+        # Angular distance to cover
+        dist = abs(end - start)
+
+        # Time needed = dist / speed
+        t = dist / v
+
+        angles = np.linspace(start, end, num=steps)
+        times = [t / steps] * len(angles)
         return zip(angles, times)
 
     # Takes raw servo angles
-    def set_servo(self, key, value, flip=False, toa=2):
+    def set_servo(self, key, value, flip=False):
         joint = self._servo_map[key]
         lb, ub = joint.limits
         cur_pos = joint.current_pos
+
+        rospy.logdebug(f"Setting servo {key} to angle {value}")
 
         # Reverse direction
         v = 180 - value if flip else value
 
         if (lb <= v <= ub):
-            if (lb <= cur_pos <= ub) and (cur_pos > 0) and (toa > 0):
-                for pos, sleep in self._build_servo_sequence(cur_pos, v, toa)
+            if (lb <= cur_pos <= ub) and (cur_pos > 0):
+                for pos, sleep in self._build_servo_sequence(cur_pos, v):
                     self._servokit.servo[joint.index].angle = pos
                     joint.current_pos = pos
                     time.sleep(sleep)

@@ -16,11 +16,12 @@ class ArmsController(ServoController):
         super(ArmsController, self).__init__()
 
         rospy.init_node("clare_arms", anonymous=False, disable_signals=False)
-
+        
+        # All limits and positions are in physical space
         self._servo_map = {
-            "sh_fb_left":  ServoJoint(0, neutral_pos=18),
+            "sh_fb_left":  ServoJoint(0, neutral_pos=162),
             "sh_fb_right": ServoJoint(1, neutral_pos=18),
-            "sh_ud_left": ServoJoint(7, neutral_pos=48),
+            "sh_ud_left": ServoJoint(7, neutral_pos=131),
             "sh_ud_right": ServoJoint(9, neutral_pos=54),
             "el_left": ServoJoint(4, neutral_pos=77),
             "el_right": ServoJoint(10, neutral_pos=83),
@@ -43,7 +44,7 @@ class ArmsController(ServoController):
             return False
         return True
   
-    def reset_to_neutral(self);
+    def reset_to_neutral(self):
         # Do in a specific order to reduce risk of self collisions
         keys = ["gr", "wr", "el", "sh_ud", "sh_fb"]
         for k in keys:
@@ -78,15 +79,15 @@ class ArmsController(ServoController):
         self.set_servo_logical("sh_ud_right", msg.sh_ud_right)
 
         # Elbows
-        self.set_servo_logical("el_left", msg.el_left, flip=False)
+        self.set_servo_logical("el_left", msg.el_left)
         self.set_servo_logical("el_right", msg.el_right)
 
         # Wrist
-        self.set_servo_logical("wr_left", msg.wr_left, flip=False)
+        self.set_servo_logical("wr_left", msg.wr_left)
         self.set_servo_logical("wr_right", msg.wr_right)
 
         # Gripper
-        self.set_servo_logical("gr_left", msg.gr_left, flip=False)
+        self.set_servo_logical("gr_left", msg.gr_left)
         self.set_servo_logical("gr_right", msg.gr_right)
 
         # Publish latest positions

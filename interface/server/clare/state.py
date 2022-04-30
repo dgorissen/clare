@@ -187,8 +187,9 @@ class ClareTop(BaseState):
         self.update_ts_to_now()
 
     def arm_cb(self, msg):
-        for k,v in ArmMovement.__dict__().items():
-            self._state[k] = msg.data
+        fields = [a for a in vars(ArmMovement) if not a.startswith('_') and not callable(getattr(ArmMovement, a))]
+        for k in fields:
+            self._state[k] = getattr(msg, k, -1)
         self.update_ts_to_now()
 
     def ir_cb(self, msg):
