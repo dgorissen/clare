@@ -2,7 +2,7 @@
 #include "utils.h"
 
 const int animTime = 50;
-binaryArrayType binaryArray[61] =		
+binaryArrayType binaryArray[73] =		
 {		
 	{ // LeftNeutral1, 0	
 		B01111110,
@@ -466,12 +466,12 @@ binaryArrayType binaryArray[61] =
 	},	
 	{ // LeftSmile, 46	
 		B00000000,
-		B00110000,
-		B00001100,
-		B00000110,
-		B00000110,
 		B00001100,
 		B00110000,
+		B01100000,
+		B01100000,
+		B00110000,
+		B00001100,
 		B00000000
 	},	
 	{ // RightChevron, 47	
@@ -494,37 +494,7 @@ binaryArrayType binaryArray[61] =
 		B00001000,
 		B00000000
 	},	
-	{ // LeftMouthSmile, 49	
-		B00000011,
-		B00000110,
-		B00001100,
-		B00011000,
-		B00010000,
-		B00110000,
-		B01100000,
-		B01100000
-	},	
-	{ // RightMouthSmile, 50	
-		B01100000,
-		B01100000,
-		B00110000,
-		B00010000,
-		B00011000,
-		B00001100,
-		B00000110,
-		B00000011
-	},	
-	{ // LeftMouthSad, 51	
-		B11000000,
-		B01100000,
-		B00110000,
-		B00011000,
-		B00001000,
-		B00001100,
-		B00000110,
-		B00000110
-	},	
-	{ // RightMouthSad, 52	
+	{ // LeftMouthBigSmile, 49	
 		B00000110,
 		B00000110,
 		B00001100,
@@ -534,57 +504,77 @@ binaryArrayType binaryArray[61] =
 		B01100000,
 		B11000000
 	},	
-	{ // LeftMouthSilly, 53	
-		B00000001,
+	{ // RightMouthBigSmile, 50	
+		B11000000,
+		B01100000,
+		B00110000,
+		B00011000,
+		B00001000,
+		B00001100,
+		B00000110,
+		B00000110
+	},	
+	{ // LeftMouthSad, 51	
+		B01100000,
+		B01100000,
+		B00110000,
+		B00010000,
+		B00011000,
+		B00001100,
+		B00000110,
+		B00000011
+	},	
+	{ // RightMouthSad, 52	
+		B00000011,
 		B00000110,
 		B00001100,
 		B00011000,
+		B00010000,
+		B00110000,
+		B01100000,
+		B01100000
+	},	
+	{ // LeftMouthSilly, 53	
+		B00011111,
+		B00011001,
+		B00011111,
 		B00011000,
-		B11111000,
-		B10011000,
-		B11111000
+		B00011000,
+		B00110000,
+		B01100000,
+		B10000000
 	},	
 	{ // RightMouthSilly, 54	
+		B10000000,
+		B01100000,
+		B00110000,
 		B00011000,
 		B00011000,
 		B00011000,
 		B00011000,
-		B00011000,
-		B00001100,
-		B00000110,
-		B00000001
+		B00011000
 	},	
 	{ // LeftMouthSquiggle, 55	
-		B00001000,
+		B00100000,
 		B00010000,
 		B00001000,
-		B00000100,
-		B00001000,
+		B00010000,
+		B00100000,
 		B00010000,
 		B00001000,
-		B00000100
+		B00010000
 	},	
 	{ // RightMouthSquiggle, 56	
-		B00001000,
+		B00100000,
 		B00010000,
 		B00001000,
-		B00000100,
-		B00001000,
+		B00010000,
+		B00100000,
 		B00010000,
 		B00001000,
-		B00000100
+		B00010000
 	},	
 	{ // LeftMouthO, 57	
-		B00000000,
-		B00000000,
-		B00000000,
-		B00000000,
-		B00011000,
-		B00100100,
-		B01000010,
-		B10000001
-	},	
-	{ // RightMouthO, 58	
 		B10000001,
 		B01000010,
 		B00100100,
@@ -594,27 +584,157 @@ binaryArrayType binaryArray[61] =
 		B00000000,
 		B00000000
 	},	
-	{ // LeftMouthX, 59	
+	{ // RightMouthO, 58	
 		B00000000,
 		B00000000,
 		B00000000,
 		B00000000,
-		B00000000,
-		B00000000,
-		B00100010,
-		B00010100
+		B00011000,
+		B00100100,
+		B01000010,
+		B10000001
 	},	
-	{ // RightMouthX, 60	
-		B00001000,
-		B00010100,
-		B00100010,
+	{ // LeftMouthX, 59	
+		B00101000,
+		B01000100,
+		B00000000,
 		B00000000,
 		B00000000,
 		B00000000,
 		B00000000,
 		B00000000
+	},	
+	{ // RightMouthX, 60	
+		B00000000,
+		B00000000,
+		B00000000,
+		B00000000,
+		B00000000,
+		B01000100,
+		B00101000,
+		B00010000
+	},	
+	{ // LeftMouthSmile, 61	
+		B00000110,
+		B00000110,
+		B00000100,
+		B00000100,
+		B00001100,
+		B00001000,
+		B00011000,
+		B00110000
+	},	
+	{ // RightMouthSmile, 62	
+		B00110000,
+		B00011000,
+		B00001000,
+		B00001100,
+		B00000100,
+		B00000100,
+		B00000110,
+		B00000110
+	},	
+	{ // LeftMouthVamp, 63	
+		B00010000,
+		B00010000,
+		B00011000,
+		B00011100,
+		B00011110,
+		B00011100,
+		B00011000,
+		B00010000
+	},	
+	{ // RightMouthVamp, 64	
+		B00010000,
+		B00011000,
+		B00011100,
+		B00011110,
+		B00011100,
+		B00011000,
+		B00010000,
+		B00010000
+	},	
+	{ // LeftMouthSlash, 65	
+		B00011000,
+		B00011000,
+		B00010000,
+		B00110000,
+		B00110000,
+		B01100000,
+		B01100000,
+		B01000000
+	},	
+	{ // RightMouthSlash, 66	
+		B00000010,
+		B00000010,
+		B00000110,
+		B00000110,
+		B00000100,
+		B00001100,
+		B00001100,
+		B00001000
+	},	
+	{ // LeftEyeSceptical, 67	
+		B00000000,
+		B00000001,
+		B00000001,
+		B00011001,
+		B00011001,
+		B00000001,
+		B00000001,
+		B00000000
+	},	
+	{ // RightEyeSceptical, 68	
+		B00000000,
+		B00000100,
+		B00000100,
+		B00011100,
+		B00011100,
+		B00000100,
+		B00000100,
+		B00000000
+	},	
+	{ // LeftMouthNeutral, 69	
+		B00011000,
+		B00011000,
+		B00011000,
+		B00011000,
+		B00011000,
+		B00011000,
+		B00011000,
+		B00000000
+	},	
+	{ // RightMouthNeutral, 70	
+		B00000000,
+		B00011000,
+		B00011000,
+		B00011000,
+		B00011000,
+		B00011000,
+		B00011000,
+		B00011000
+	},	
+	{ // LeftEyeSlit, 71	
+		B00000000,
+		B00011000,
+		B00011000,
+		B00011000,
+		B00011000,
+		B00011000,
+		B00011000,
+		B00000000
+	},	
+	{ // RightEyeSlit, 72	
+		B00000000,
+		B00011000,
+		B00011000,
+		B00011000,
+		B00011000,
+		B00011000,
+		B00011000,
+		B00000000
 	}	
-};
+};			
 
 Face::Face(int le, int re, int lm, int rm) {
 	fleftEyeIdx = le;
@@ -673,7 +793,10 @@ void Face::blink() {
       {LeftNeutral1, 2000, 1},     {RightNeutral1, 2000, 1},
       {LeftNeutral2, animTime, 1}, {RightNeutral2, animTime, 1},
       {LeftNeutral3, animTime, 1}, {RightNeutral3, animTime, 1},
-      {LeftNeutral4, animTime, 1}, {LeftNeutral4, animTime, 1},
+      {LeftNeutral4, animTime, 1}, {RightNeutral4, animTime, 1},
+      {LeftNeutral3, animTime, 1}, {RightNeutral3, animTime, 1},
+      {LeftNeutral2, animTime, 1}, {RightNeutral2, animTime, 1},
+      {LeftNeutral1, 2000, 1},     {RightNeutral1, 2000, 1}
   };
 
   setEyeExpression(neutralBlink, arraySize(neutralBlink));
@@ -833,6 +956,14 @@ void Face::smileMouth() {
   setMouthExpression(smile, arraySize(smile));
 }
 
+void Face::bigSmileMouth() {
+  frameType smile[] = {
+      {LeftMouthBigSmile, 0, 1},
+      {RightMouthBigSmile, 0, 1},
+  };
+  setMouthExpression(smile, arraySize(smile));
+}
+
 void Face::sadMouth() {
   frameType sad[] = {
       {LeftMouthSad, 0, 1},
@@ -873,9 +1004,60 @@ void Face::ughMouth() {
   setMouthExpression(ugh, arraySize(ugh));
 }
 
+void Face::mmmMouth(){
+  frameType mm[] = {
+      {LeftMouthSlash, 0, 1},
+      {RightMouthSlash, 0, 1},
+  };
+  setMouthExpression(mm, arraySize(mm));
+}
+
+void Face::scepticalEyes(){
+  frameType eyes[] = {
+      {LeftEyeSceptical, 0, 1},
+      {RightEyeSceptical, 0, 1},
+  };
+  setEyeExpression(eyes, arraySize(eyes));
+}
+
+void Face::neutralMouth(){
+  frameType mm[] = {
+      {LeftMouthNeutral, 0, 1},
+      {RightMouthNeutral, 0, 1},
+  };
+  setMouthExpression(mm, arraySize(mm));
+}
+
+void Face::slitEyes(){
+  frameType eyes[] = {
+      {LeftEyeSlit, 0, 1},
+      {RightEyeSlit, 0, 1},
+  };
+  setEyeExpression(eyes, arraySize(eyes));
+}
+
+void Face::vampireMouth(){
+  frameType mm[] = {
+      {LeftMouthVamp, 0, 1},
+      {RightMouthVamp, 0, 1},
+  };
+  setMouthExpression(mm, arraySize(mm));
+}
+
+
+void Face::happyBlink(){
+    smileMouth();
+    blink();
+}
+
 void Face::happy(){
     smileEyes();
     smileMouth();
+}
+
+void Face::bigHappy(){
+    smileEyes();
+    bigSmileMouth();
 }
 
 void Face::sad(){
@@ -912,10 +1094,36 @@ void Face::kiss(){
     smileEyes();
     kissMouth();
 }
+void Face::mmm(){
+    neutralEyes();
+    mmmMouth();
+}
+
+void Face::sceptical(){
+    scepticalEyes();
+    neutralMouth();
+}
+
+void Face::ohDear(){
+    lookUp();
+    neutralMouth();
+}
+
+void Face::noExpression(){
+    slitEyes();
+    neutralMouth();
+}
+
+void Face::vampire(){
+	angryEyes();
+	vampireMouth();
+}
 
 void Face::setExpression(const char* ex){
 	if (strcmp(ex, "happy") == 0) {
 		this->happy();
+	} else if (strcmp(ex, "happyblink") == 0) {
+		this->happyBlink();
 	} else if (strcmp(ex, "sad") == 0) {
 		this->sad();
 	} else if (strcmp(ex, "angry") == 0) {

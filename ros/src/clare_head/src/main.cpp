@@ -18,7 +18,7 @@ ros::NodeHandle nh;
 ros::Subscriber<clare_head::FaceMessage> face_sub("clare/head/face", face_callback);
 
 clare_head::FaceMessage face_msg;
-Face face = Face(0, 1, 2, 3);
+Face face = Face(0, 2, 3, 1);
 
 void setup() {
   Serial.begin(BAUD);
@@ -50,6 +50,10 @@ void face_callback(const clare_head::FaceMessage& face_msg){
 void loopEmotions(){
     face.happy();
     delaySeconds(2);
+    face.happyBlink();
+    delaySeconds(2);
+    face.bigHappy();
+    delaySeconds(2);
     face.sad();
     delaySeconds(2);
     face.silly();
@@ -63,6 +67,16 @@ void loopEmotions(){
     face.surprised();
     delaySeconds(2);
     face.kiss();
+    delaySeconds(2);
+    face.mmm();
+    delaySeconds(2);
+    face.sceptical();
+    delaySeconds(2);
+    face.ohDear();
+    delaySeconds(2);
+    face.noExpression();
+    delaySeconds(2);
+    face.vampire();
     delaySeconds(2);
 }
 
