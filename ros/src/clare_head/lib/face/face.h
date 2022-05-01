@@ -12,6 +12,11 @@ class Face {
         int fleftMouthIdx = -1;
         int frightMouthIdx = -1;
 
+        const int DATA_IN_PIN = 2;
+	    const int CLK_PIN = 4;
+	    const int CS_PIN = 3;
+	    const int NUM_DEVICES = 4;
+
         void setTuple(const frameType, const frameType, const int i, const int j);
         void setEyes(const frameType, const frameType);
         void setEyeExpression(const frameType expression[], const int size);

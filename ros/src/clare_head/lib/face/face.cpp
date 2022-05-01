@@ -622,16 +622,6 @@ Face::Face(int le, int re, int lm, int rm) {
 	fleftMouthIdx = lm;
 	frightMouthIdx = rm;
 
-	/*
-	pin 2 is connected to the DataIn
-	pin 4 is connected to the CLK
-	pin 3 is connected to LOAD
-	*/
-	const int DATA_IN_PIN = 2;
-	const int CLK_PIN = 4;
-	const int CS_PIN = 3;
-	const int NUM_DEVICES = 4;
-
 	flc = LedControl_SW_SPI();
 	flc.begin(DATA_IN_PIN, CLK_PIN, CS_PIN, NUM_DEVICES);
 }
@@ -924,21 +914,21 @@ void Face::kiss(){
 }
 
 void Face::setExpression(const char* ex){
-	if (ex == "happy") {
+	if (strcmp(ex, "happy") == 0) {
 		this->happy();
-	} else if (ex == "sad") {
+	} else if (strcmp(ex, "sad") == 0) {
 		this->sad();
-	} else if (ex == "angry") {
+	} else if (strcmp(ex, "angry") == 0) {
 		this->angry();
-	} else if (ex == "silly") {
+	} else if (strcmp(ex, "silly") == 0) {
 		this->silly();
-	} else if (ex == "surprised") {
+	} else if (strcmp(ex, "surprised") == 0) {
 		this->surprised();
-	} else if (ex == "ugh") {
+	} else if (strcmp(ex, "ugh") == 0) {
 		this->ugh();
-	} else if (ex == "confused") {
+	} else if (strcmp(ex, "confused") == 0) {
 		this->confused();
-	} else if (ex == "kiss") {
+	} else if (strcmp(ex, "kiss") == 0) {
 		this->kiss();
 	} else {
 		// Ignore

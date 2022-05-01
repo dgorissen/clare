@@ -1,6 +1,5 @@
 #include <Arduino.h>
-
-#define arraySize(x) (sizeof(x) / sizeof(x[0]))
+#include "utils.h"
 
 void delayMillis(int milliseconds) {
   if(milliseconds < 1) return;

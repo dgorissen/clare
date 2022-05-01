@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <ArduinoLog.h>
-#include "face.h"
 #include "utils.h"
+#include "face.h"
 #include <ros.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Empty.h>
