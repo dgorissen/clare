@@ -2,22 +2,22 @@
 #include <ArduinoLog.h>
 #include "utils.h"
 #include "face.h"
-#include <ros.h>
-#include <std_msgs/String.h>
-#include <std_msgs/Empty.h>
-#include <std_msgs/Bool.h>
-#include <std_msgs/Header.h>
-#include <clare_head/FaceMessage.h>
+// #include <ros.h>
+// #include <std_msgs/String.h>
+// #include <std_msgs/Empty.h>
+// #include <std_msgs/Bool.h>
+// #include <std_msgs/Header.h>
+// #include <clare_head/FaceMessage.h>
 
 const long BAUD = 115200;
 
-// Fwd declarations
-void face_callback(const clare_head::FaceMessage& face_msg);
+// // Fwd declarations
+// void face_callback(const clare_head::FaceMessage& face_msg);
 
-ros::NodeHandle nh;
-ros::Subscriber<clare_head::FaceMessage> face_sub("clare/head/face", face_callback);
+// ros::NodeHandle nh;
+// ros::Subscriber<clare_head::FaceMessage> face_sub("clare/head/face", face_callback);
 
-clare_head::FaceMessage face_msg;
+// clare_head::FaceMessage face_msg;
 Face face = Face(0, 2, 3, 1);
 
 void setup() {
@@ -38,14 +38,14 @@ void setup() {
   
   face.reset();
 
-  nh.initNode();
-  nh.subscribe(face_sub);
+  // nh.initNode();
+  // nh.subscribe(face_sub);
 }
 
-void face_callback(const clare_head::FaceMessage& face_msg){
-  const char * expression  = face_msg.expression;
-  face.setExpression(expression);
-}
+// void face_callback(const clare_head::FaceMessage& face_msg){
+//   const char * expression  = face_msg.expression;
+//   face.setExpression(expression);
+// }
 
 void loopEmotions(){
     face.happy();
