@@ -15,15 +15,15 @@
 
 const long BAUD = 115200;
 
-const int SOUND_ANALOG_PIN = A6;
-const int SOUND_DIGITAL_PIN = 3;
+const int SOUND_ANALOG_PIN = 21;
+const int SOUND_DIGITAL_PIN = 22;
 
 #define DHTTYPE DHT11
 const int DHT11_PIN = 5;
 DHT nose(DHT11_PIN, DHTTYPE);
 
 const int NUM_EAR_LEDS = 4;
-const int LED_PIN = 7;
+const int LED_PIN = 9;
 CRGB ear_leds[NUM_EAR_LEDS];
 
 // Fwd declarations
@@ -59,8 +59,8 @@ void setup() {
 
   mpu.setupMpu(Log);
 
-  Serial1.begin(115200);
-  evo.setupEvo(Log, Serial1);
+  Serial2.begin(115200);
+  evo.setupEvo(Log, Serial2);
 
   FastLED.addLeds<WS2811, LED_PIN>(ear_leds, NUM_EAR_LEDS);
 
@@ -150,13 +150,18 @@ void loop() {
   ++ctr;
 
   // loopEmotions(500);
+  face.bigHappy();
+  delay(500);
+  face.sad();
+  delay(500);
+  
   mpu.readState(w, x, y, z, ax, ay, az);
   evo.readState(x1, x2, x3, x4);
   smell(hum, temp);
   snd = read_sound();
 
   Log.info("w=%D x=%D y=%D z=%D ax=%D ay=%D az=%D x1=%D x2=%D x3=%D x4=%D "
-           "hum=%D temp=%D snd=%d",
+           "hum=%D temp=%D snd=%d\n",
            w, x, y, z, ax, ay, az, x1, x2, x3, x4, hum, temp, snd);
 
   if (ctr % 2) {
