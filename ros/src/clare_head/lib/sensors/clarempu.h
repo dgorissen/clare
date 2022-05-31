@@ -34,7 +34,7 @@ class ClareMpu {
     public:    
         ClareMpu();
         void setupMpu(Logging &Log);
-        void readState(float w, float x, float y, float z, float ax, float ay, float az);
+        void readState(float &w, float &x, float &y, float &z, float &ax, float &ay, float &az);
 };
 
 ClareMpu::ClareMpu(){
@@ -93,9 +93,14 @@ void ClareMpu::setupMpu(Logging &Log) {
     }
 }
 
-void ClareMpu::readState(float w, float x, float y, float z, float ax, float ay, float az) {
+void ClareMpu::readState(float &w, float &x, float &y, float &z, float &ax, float &ay, float &az) {
     // if programming failed, don't try to do anything
-    if (!dmpReady) return;
+    if (!dmpReady) {
+        Log.error("DMP not ready");
+        return;
+    } else{
+        Log.info("DMP is ready");
+    }
 
     // read a packet from FIFO
     if (mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) { // Get the Latest packet 
@@ -115,6 +120,8 @@ void ClareMpu::readState(float w, float x, float y, float z, float ax, float ay,
         ax = aaWorld.x;
         ay = aaWorld.y;
         az = aaWorld.z;
+    } else {
+        Log.error("No packet\n");
     }
 }
 #endif

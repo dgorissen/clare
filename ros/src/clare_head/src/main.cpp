@@ -4,6 +4,7 @@
 #include <ArduinoLog.h>
 #include <FastLED.h>
 #include <DHT.h>
+#include <IRremote.h>
 // #include <ros.h>
 // #include <std_msgs/String.h>
 // #include <std_msgs/Empty.h>
@@ -15,15 +16,15 @@
 
 const long BAUD = 115200;
 
-const int SOUND_ANALOG_PIN = 21;
 const int SOUND_DIGITAL_PIN = 22;
-
-#define DHTTYPE DHT11
+const int SOUND_ANALOG_PIN = 21;
+const int LDR_ANALOG_PIN = 23;
 const int DHT11_PIN = 5;
-DHT nose(DHT11_PIN, DHTTYPE);
-
-const int NUM_EAR_LEDS = 4;
+const int IRT_PIN = 6;
 const int LED_PIN = 9;
+
+DHT nose(DHT11_PIN, DHT11);
+const int NUM_EAR_LEDS = 4;
 CRGB ear_leds[NUM_EAR_LEDS];
 
 // Fwd declarations
@@ -38,6 +39,19 @@ Face face = Face(0, 2, 3, 1);
 
 ClareMpu mpu;
 ClareEvo evo;
+
+int snd = -1;
+unsigned long last_snd = millis();
+unsigned int debounce_snd_time = 1000;
+
+void sound_int_handler(){
+  unsigned long cur_snd = millis();
+
+  if((cur_snd - last_snd) > debounce_snd_time){
+    last_snd = millis();
+    snd = 1;
+  }
+}
 
 void setup() {
   Serial.begin(BAUD);
@@ -55,30 +69,40 @@ void setup() {
   Log.begin(LOG_LEVEL_NOTICE, &Serial);
   // Log.begin(LOG_LEVEL_VERBOSE, &Serial);
 
-  face.reset();
+  pinMode(SOUND_DIGITAL_PIN, INPUT);
+  pinMode(SOUND_ANALOG_PIN, INPUT);
+  pinMode(LDR_ANALOG_PIN, INPUT);
+  pinMode(IRT_PIN, OUTPUT);
 
+  face.reset();
   mpu.setupMpu(Log);
+  nose.begin();
 
   Serial2.begin(115200);
   evo.setupEvo(Log, Serial2);
 
   FastLED.addLeds<WS2811, LED_PIN>(ear_leds, NUM_EAR_LEDS);
+  attachInterrupt(digitalPinToInterrupt(SOUND_DIGITAL_PIN), sound_int_handler, RISING);
 
-  nose.begin();
+  IrSender.begin(IRT_PIN, ENABLE_LED_FEEDBACK);
 
   // nh.initNode();
   // nh.subscribe(face_sub);
 }
 
-bool read_sound() {
+int read_sound() {
   const float analog = analogRead(SOUND_ANALOG_PIN) * (3.3 / 1023.0);
   const int digital = digitalRead(SOUND_DIGITAL_PIN);
-  return bool(digital);
+  return digital;
+}
+
+float read_ldr(){
+  const float analog = analogRead(LDR_ANALOG_PIN) * (3.3 / 1023.0);
+  return analog;
 }
 
 void set_ears(CRGB::HTMLColorCode c) {
   for (int i = 0; i < NUM_EAR_LEDS; ++i) {
-    // Turn the first led red for 1 second
     ear_leds[i] = c;
     FastLED.show();
   }
@@ -90,6 +114,13 @@ void smell(float &hum, float &temp) {
 
   if (isnan(hum)) hum = -1;
   if (isnan(temp)) temp = -1;
+}
+
+void send_ir(){
+  uint16_t sAddress = 0x0102;
+  uint8_t sCommand = 0x34;
+  uint8_t sRepeats = 0;
+  IrSender.sendNEC(sAddress, sCommand, sRepeats);
 }
 
 // void face_callback(const clare_head::FaceMessage& face_msg){
@@ -130,24 +161,17 @@ void loopEmotions(const int wait) {
   delay(wait);
 }
 
-float w;
-float x;
-float y;
-float z;
-float ax;
-float ay;
-float az;
-float x1;
-float x2;
-float x3;
-float x4;
-int ctr = 0;
-bool snd = false;
+float w, x, y, z, ax, ay, az, x1, x2, x3, x4;
 float temp;
 float hum;
+bool snd_heard;
+float light;
+int ctr = 0;
 
 void loop() {
   ++ctr;
+
+  snd_heard = false;
 
   // loopEmotions(500);
   face.bigHappy();
@@ -158,11 +182,16 @@ void loop() {
   mpu.readState(w, x, y, z, ax, ay, az);
   evo.readState(x1, x2, x3, x4);
   smell(hum, temp);
-  snd = read_sound();
+  light = read_ldr();
+
+  if(snd > 0) {
+    snd_heard = 1;
+    snd = 0;
+  }
 
   Log.info("w=%D x=%D y=%D z=%D ax=%D ay=%D az=%D x1=%D x2=%D x3=%D x4=%D "
-           "hum=%D temp=%D snd=%d\n",
-           w, x, y, z, ax, ay, az, x1, x2, x3, x4, hum, temp, snd);
+           "hum=%D temp=%D light=%D, snd=%d\n",
+           w, x, y, z, ax, ay, az, x1, x2, x3, x4, hum, temp, light, snd_heard);
 
   if (ctr % 2) {
     set_ears(CRGB::Blue);
@@ -170,5 +199,7 @@ void loop() {
     set_ears(CRGB::Green);
   }
 
-  delay(1000);
+  send_ir();
+
+  delay(200);
 }
