@@ -31,12 +31,11 @@ static const uint8_t crc_table[] = {
 class ClareEvo {
     private:
         Stream *channel;
-        Logging logger;
-        uint8_t indexx;
+        Logging *logger;
     public:    
         ClareEvo();
-        void setupEvo(Logging &Log, Stream &serial);
-        void readState(float x1, float x2, float x3, float x4);
+        void setupEvo(Logging* lggr, Stream* serial);
+        void readState(float &x1, float &x2, float &x3, float &x4);
 };
 
 #endif

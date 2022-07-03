@@ -79,7 +79,7 @@ void setup() {
   nose.begin();
 
   Serial2.begin(115200);
-  evo.setupEvo(Log, Serial2);
+  evo.setupEvo(&Log, &Serial2);
 
   FastLED.addLeds<WS2811, LED_PIN>(ear_leds, NUM_EAR_LEDS);
   attachInterrupt(digitalPinToInterrupt(SOUND_DIGITAL_PIN), sound_int_handler, RISING);
