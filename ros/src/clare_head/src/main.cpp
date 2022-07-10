@@ -23,7 +23,7 @@ const int DHT11_PIN = 5;
 const int IRT_PIN = 6;
 const int LED_PIN = 9;
 
-DHT nose(DHT11_PIN, DHT11);
+DHT nose(DHT11_PIN, DHT11, 27);
 const int NUM_EAR_LEDS = 4;
 CRGB ear_leds[NUM_EAR_LEDS];
 
@@ -119,7 +119,7 @@ void smell(float &hum, float &temp) {
 void send_ir(){
   uint16_t sAddress = 0x0102;
   uint8_t sCommand = 0x34;
-  uint8_t sRepeats = 0;
+  uint8_t sRepeats = 5;
   IrSender.sendNEC(sAddress, sCommand, sRepeats);
 }
 
@@ -168,9 +168,14 @@ bool snd_heard;
 float light;
 int ctr = 0;
 
+
+void loop2() {
+  delay(1000);
+  Serial.println("foo");
+}
+
 void loop() {
   ++ctr;
-
   snd_heard = false;
 
   // loopEmotions(500);
