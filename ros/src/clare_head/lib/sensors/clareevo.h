@@ -1,7 +1,7 @@
 #ifndef CLAREEVO_H
 #define CLAREEVO_H
 
-#include "ArduinoLog.h"
+#include "Arduino.h"
 
 static const uint8_t crc_table[] = {
   0x00, 0x07, 0x0e, 0x09, 0x1c, 0x1b, 0x12, 0x15, 0x38, 0x3f, 0x36, 0x31,
@@ -31,10 +31,9 @@ static const uint8_t crc_table[] = {
 class ClareEvo {
     private:
         Stream *channel;
-        Logging *logger;
     public:    
         ClareEvo();
-        void setupEvo(Logging* lggr, Stream* serial);
+        void setupEvo(Stream* serial);
         void readState(float &x1, float &x2, float &x3, float &x4);
 };
 

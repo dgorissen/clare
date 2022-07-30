@@ -66,7 +66,7 @@ void setup() {
   // * 6 - LOG_LEVEL_VERBOSE    all
   // LOG_LEVEL_SILENT, LOG_LEVEL_FATAL, LOG_LEVEL_ERROR, LOG_LEVEL_WARNING,
   // LOG_LEVEL_NOTICE, LOG_LEVEL_TRACE, LOG_LEVEL_VERBOSE
-  Log.begin(LOG_LEVEL_NOTICE, &Serial);
+  Log.begin(LOG_LEVEL_INFO, &Serial);
   // Log.begin(LOG_LEVEL_VERBOSE, &Serial);
 
   pinMode(SOUND_DIGITAL_PIN, INPUT);
@@ -75,11 +75,11 @@ void setup() {
   pinMode(IRT_PIN, OUTPUT);
 
   face.reset();
-  mpu.setupMpu(Log);
+  mpu.setupMpu();
   nose.begin();
 
   Serial2.begin(115200);
-  evo.setupEvo(&Log, &Serial2);
+  evo.setupEvo(&Serial2);
 
   FastLED.addLeds<WS2811, LED_PIN>(ear_leds, NUM_EAR_LEDS);
   attachInterrupt(digitalPinToInterrupt(SOUND_DIGITAL_PIN), sound_int_handler, RISING);
@@ -179,11 +179,12 @@ void loop() {
   snd_heard = false;
 
   // loopEmotions(500);
-  face.bigHappy();
-  delay(500);
-  face.sad();
-  delay(500);
-  
+  if(ctr % 5) {
+    face.bigHappy();
+  } else {
+    face.sad();
+  }
+
   mpu.readState(w, x, y, z, ax, ay, az);
   evo.readState(x1, x2, x3, x4);
   smell(hum, temp);
@@ -206,5 +207,5 @@ void loop() {
 
   send_ir();
 
-  delay(200);
+  delay(100);
 }

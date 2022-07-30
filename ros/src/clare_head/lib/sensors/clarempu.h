@@ -30,17 +30,18 @@ class ClareMpu {
         VectorInt16 aaWorld;    // [x, y, z]            world-frame accel sensor measurements
         VectorFloat gravity;    // [x, y, z]            gravity vector
 
-        Logging logger;
+        uint8_t devStatus = -999;
     public:    
         ClareMpu();
-        void setupMpu(Logging &Log);
+        void setupMpu();
         void readState(float &w, float &x, float &y, float &z, float &ax, float &ay, float &az);
 };
 
 ClareMpu::ClareMpu(){
 }
 
-void ClareMpu::setupMpu(Logging &Log) {
+void ClareMpu::setupMpu() {
+
     // join I2C bus (I2Cdev library doesn't do this automatically)
     #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
         Wire.begin();
@@ -53,14 +54,14 @@ void ClareMpu::setupMpu(Logging &Log) {
 
     // verify connection
     if (mpu.testConnection()){
-        Log.info(F("MPU6050 connection successful"));
+        Log.info(F("MPU6050 connection successful\n"));
     }else {
-        Log.error(F("MPU6050 connection failed"));
+        Log.error(F("MPU6050 connection failed\n"));
     }
 
     // load and configure the DMP
-    logger.info(F("Initializing DMP..."));
-    uint8_t devStatus = mpu.dmpInitialize();
+    Log.info(F("Initializing DMP...\n"));
+    devStatus = mpu.dmpInitialize();
 
     // Gyro offsets, scaled for min sensitivity
     mpu.setXGyroOffset(220);
@@ -75,11 +76,11 @@ void ClareMpu::setupMpu(Logging &Log) {
         mpu.CalibrateGyro(6);
         mpu.PrintActiveOffsets();
         // turn on the DMP, now that it's ready
-        logger.info(F("Enabling DMP..."));
+        Log.info(F("Enabling DMP...\n"));
         mpu.setDMPEnabled(true);
 
         // set our DMP Ready flag so the main loop() function knows it's okay to use it
-        logger.info(F("DMP ready!"));
+        Log.info(F("DMP ready!\n"));
         dmpReady = true;
 
         // get expected DMP packet size for later comparison
@@ -89,17 +90,17 @@ void ClareMpu::setupMpu(Logging &Log) {
         // 1 = initial memory load failed
         // 2 = DMP configuration updates failed
         // (if it's going to break, usually the code will be 1)
-        logger.info(F("DMP Initialization failed (code %i)"), devStatus);
+        Log.info(F("DMP Initialization failed (code %i)\n"), devStatus);
     }
 }
 
 void ClareMpu::readState(float &w, float &x, float &y, float &z, float &ax, float &ay, float &az) {
     // if programming failed, don't try to do anything
     if (!dmpReady) {
-        Log.error("DMP not ready");
+        Log.error("MPU DMP not ready, status: %i\n", devStatus);
         return;
     } else{
-        Log.info("DMP is ready");
+        //Log.notice("DMP is ready\n");
     }
 
     // read a packet from FIFO

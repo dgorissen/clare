@@ -1,11 +1,12 @@
 #include "clareevo.h"
+#include "ArduinoLog.h"
 
 ClareEvo::ClareEvo(){
+
 }
 
-void ClareEvo::setupEvo(Logging* lggr, Stream* serial) {
+void ClareEvo::setupEvo(Stream* serial) {
     channel = serial;
-    logger = lggr;
 
     const byte PRINTOUT_BINARY[4]             = {0x00,0x11,0x02,0x4C};
     const byte PRINTOUT_TEXT[4]               = {0x00,0x11,0x01,0x45};
@@ -90,8 +91,8 @@ void ClareEvo::readState(float &x1, float &x2, float &x3, float &x4) {
 
           break;
         } else {
-          logger->error(
-              "CRC checks failed. Couldn't find valid frame in buffer length");
+          Log.error(
+              "EVO CRC checks failed. Couldn't find valid frame in buffer length\n");
           break;
         }
       }
