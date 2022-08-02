@@ -2320,11 +2320,6 @@ design rules under a new name.</description>
 <attribute name="POPULARITY" value="35" x="52.67" y="18.82" size="1.778" layer="27" display="off"/>
 <attribute name="VALUE" x="13.3" y="58.825" size="1.27" layer="27"/>
 </element>
-<element name="MPU" library="pinhead" library_urn="urn:adsk.eagle:library:325" package="1X03" package3d_urn="urn:adsk.eagle:package:22458/2" value="" x="45.77" y="44.22" smashed="yes" rot="R90">
-<attribute name="NAME" x="48.9412" y="42.3338" size="1.27" layer="25" ratio="10" rot="R90"/>
-<attribute name="POPULARITY" value="92" x="108" y="62" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="VALUE" x="48.945" y="40.41" size="1.27" layer="27" rot="R90"/>
-</element>
 <element name="POWER_3V" library="pinhead" library_urn="urn:adsk.eagle:library:325" package="2X05" package3d_urn="urn:adsk.eagle:package:22470/2" value="" x="26.32" y="52.49" smashed="yes" rot="R180">
 <attribute name="NAME" x="32.67" y="49.315" size="1.27" layer="25" ratio="10" rot="R180"/>
 <attribute name="POPULARITY" value="35" x="6" y="69" size="1.778" layer="27" rot="R180" display="off"/>
@@ -2399,6 +2394,11 @@ design rules under a new name.</description>
 <attribute name="NAME" x="1.0338" y="-8.1712" size="1.27" layer="25" ratio="10"/>
 <attribute name="POPULARITY" value="0" x="10" y="-10" size="1.778" layer="27" display="off"/>
 <attribute name="VALUE" x="1.11" y="-13.175" size="1.27" layer="27"/>
+</element>
+<element name="MPU" library="pinhead" library_urn="urn:adsk.eagle:library:325" package="1X05" package3d_urn="urn:adsk.eagle:package:22469/2" value="" x="7" y="-16" smashed="yes">
+<attribute name="NAME" x="0.5738" y="-14.1712" size="1.27" layer="25" ratio="10"/>
+<attribute name="POPULARITY" value="69" x="7" y="-16" size="1.778" layer="27" display="off"/>
+<attribute name="VALUE" x="0.65" y="-19.175" size="1.27" layer="27"/>
 </element>
 </elements>
 <signals>
@@ -2567,7 +2567,9 @@ design rules under a new name.</description>
 <wire x1="9.906" y1="24.384" x2="6.2484" y2="20.7264" width="0.1524" layer="16"/>
 <wire x1="10.0584" y1="5.1816" x2="10.12" y2="5.08" width="0.1524" layer="16"/>
 <contactref element="FACE" pad="4"/>
+<contactref element="MPU" pad="4"/>
 <wire x1="9.54" y1="-4" x2="10.12" y2="5.08" width="0" layer="19" extent="1-1"/>
+<wire x1="9.54" y1="-16" x2="9.54" y2="-4" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="TX">
 <contactref element="RPI-SWPED" pad="1"/>
@@ -2698,7 +2700,9 @@ design rules under a new name.</description>
 <wire x1="28.8036" y1="51.2064" x2="28.86" y2="51.22" width="0.1524" layer="1"/>
 <wire x1="26.3652" y1="51.2064" x2="26.32" y2="51.22" width="0.1524" layer="1"/>
 <contactref element="FACE" pad="5"/>
+<contactref element="DH11_LDR+-_IRT+-_SNDDA" pad="2"/>
 <wire x1="12.08" y1="-4" x2="19" y2="7.57" width="0" layer="19" extent="1-1"/>
+<wire x1="4.92" y1="-10" x2="12.08" y2="-4" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$2">
 <contactref element="VIN_13" pad="2"/>
@@ -2845,32 +2849,32 @@ design rules under a new name.</description>
 </signal>
 <signal name="MPUINT">
 <contactref element="VIN_13" pad="7"/>
-<contactref element="MPU" pad="1"/>
 <wire x1="19.6596" y1="17.8308" x2="19.05" y2="17.8308" width="0.1524" layer="16"/>
 <wire x1="33.6804" y1="31.8516" x2="19.6596" y2="17.8308" width="0.1524" layer="16"/>
 <wire x1="35.9664" y1="31.8516" x2="33.6804" y2="31.8516" width="0.1524" layer="16"/>
 <wire x1="45.72" y1="41.6052" x2="35.9664" y2="31.8516" width="0.1524" layer="16"/>
 <wire x1="19.05" y1="17.8308" x2="19" y2="17.73" width="0.1524" layer="16"/>
-<wire x1="45.72" y1="41.6052" x2="45.77" y2="41.68" width="0.1524" layer="16"/>
+<contactref element="MPU" pad="1"/>
+<wire x1="1.92" y1="-16" x2="19" y2="17.73" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="MPUSCL">
 <contactref element="VIN_13" pad="8"/>
-<contactref element="MPU" pad="2"/>
 <wire x1="19.6596" y1="20.4216" x2="19.05" y2="20.4216" width="0.1524" layer="16"/>
 <wire x1="33.6804" y1="34.4424" x2="19.6596" y2="20.4216" width="0.1524" layer="16"/>
 <wire x1="35.9664" y1="34.4424" x2="33.6804" y2="34.4424" width="0.1524" layer="16"/>
 <wire x1="45.72" y1="44.196" x2="35.9664" y2="34.4424" width="0.1524" layer="16"/>
 <wire x1="19.05" y1="20.4216" x2="19" y2="20.27" width="0.1524" layer="16"/>
-<wire x1="45.72" y1="44.196" x2="45.77" y2="44.22" width="0.1524" layer="16"/>
+<contactref element="MPU" pad="3"/>
+<wire x1="7" y1="-16" x2="19" y2="20.27" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="MPUSDA">
 <contactref element="VIN_13" pad="9"/>
-<contactref element="MPU" pad="3"/>
 <wire x1="19.6596" y1="22.86" x2="19.05" y2="22.86" width="0.1524" layer="16"/>
 <wire x1="43.434" y1="46.6344" x2="19.6596" y2="22.86" width="0.1524" layer="16"/>
 <wire x1="45.72" y1="46.6344" x2="43.434" y2="46.6344" width="0.1524" layer="16"/>
 <wire x1="19.05" y1="22.86" x2="19" y2="22.81" width="0.1524" layer="16"/>
-<wire x1="45.72" y1="46.6344" x2="45.77" y2="46.76" width="0.1524" layer="16"/>
+<contactref element="MPU" pad="2"/>
+<wire x1="4.46" y1="-16" x2="19" y2="22.81" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="SND_D">
 <contactref element="VIN_13" pad="5"/>
@@ -2990,8 +2994,8 @@ design rules under a new name.</description>
 <wire x1="18.8976" y1="27.8892" x2="19" y2="27.89" width="0.1524" layer="1"/>
 <via x="36.8808" y="7.4676" extent="1-16" drill="0.35"/>
 </signal>
-<signal name="LDR+">
-<contactref element="DH11_LDR+-_IRT+-_SNDDA" pad="2"/>
+<signal name="5V">
+<contactref element="MPU" pad="5"/>
 </signal>
 </signals>
 <mfgpreviewcolors>

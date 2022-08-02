@@ -14669,7 +14669,6 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <part name="C1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="CPOL-EU" device="E2,5-6E" package3d_urn="urn:adsk.eagle:package:23430/1"/>
 <part name="R6" library="SparkFun-Resistors" library_urn="urn:adsk.eagle:library:532" deviceset="1KOHM" device="-HORIZ-1/4W-1%" package3d_urn="urn:adsk.eagle:package:39658/1" value="2.2k"/>
 <part name="R7" library="SparkFun-Resistors" library_urn="urn:adsk.eagle:library:532" deviceset="1KOHM" device="-HORIZ-1/4W-1%" package3d_urn="urn:adsk.eagle:package:39658/1" value="33"/>
-<part name="MPU" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X3" device="" package3d_urn="urn:adsk.eagle:package:22458/2"/>
 <part name="POWER_3V" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X5" device="" package3d_urn="urn:adsk.eagle:package:22470/2"/>
 <part name="SER4" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X2" device="" package3d_urn="urn:adsk.eagle:package:22435/2"/>
 <part name="15-13_10-12_3V" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X6" device="" package3d_urn="urn:adsk.eagle:package:22472/2"/>
@@ -14677,6 +14676,7 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <part name="POWER_5V" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X4" device="" package3d_urn="urn:adsk.eagle:package:22461/2"/>
 <part name="FACE" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X5" device="" package3d_urn="urn:adsk.eagle:package:22469/2"/>
 <part name="DH11_LDR+-_IRT+-_SNDDA" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X7" device="" package3d_urn="urn:adsk.eagle:package:22477/2"/>
+<part name="MPU" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X5" device="" package3d_urn="urn:adsk.eagle:package:22469/2"/>
 </parts>
 <sheets>
 <sheet>
@@ -14758,10 +14758,6 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <attribute name="NAME" x="86.36" y="-6.096" size="1.778" layer="95" font="vector" align="bottom-center"/>
 <attribute name="VALUE" x="86.36" y="-9.144" size="1.778" layer="96" font="vector" align="top-center"/>
 </instance>
-<instance part="MPU" gate="A" x="50.8" y="30.48" smashed="yes">
-<attribute name="NAME" x="44.45" y="36.195" size="1.778" layer="95"/>
-<attribute name="VALUE" x="44.45" y="22.86" size="1.778" layer="96"/>
-</instance>
 <instance part="POWER_3V" gate="A" x="127" y="-17.78" smashed="yes">
 <attribute name="NAME" x="120.65" y="-9.525" size="1.778" layer="95"/>
 <attribute name="VALUE" x="120.65" y="-27.94" size="1.778" layer="96"/>
@@ -14789,6 +14785,10 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <instance part="DH11_LDR+-_IRT+-_SNDDA" gate="A" x="68.58" y="-5.08" smashed="yes">
 <attribute name="NAME" x="62.23" y="5.715" size="1.778" layer="95"/>
 <attribute name="VALUE" x="62.23" y="-17.78" size="1.778" layer="96"/>
+</instance>
+<instance part="MPU" gate="A" x="55.88" y="27.94" smashed="yes">
+<attribute name="NAME" x="49.53" y="36.195" size="1.778" layer="95"/>
+<attribute name="VALUE" x="49.53" y="17.78" size="1.778" layer="96"/>
 </instance>
 </instances>
 <busses>
@@ -14922,6 +14922,11 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <pinref part="FACE" gate="A" pin="4"/>
 <wire x1="-7.62" y1="-20.32" x2="-17.78" y2="-20.32" width="0.1524" layer="91"/>
 <label x="-20.32" y="-20.32" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="MPU" gate="A" pin="4"/>
+<wire x1="53.34" y1="25.4" x2="40.64" y2="25.4" width="0.1524" layer="91"/>
+<label x="35.56" y="25.4" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="TX" class="0">
@@ -15212,9 +15217,9 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <label x="2.54" y="68.58" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="MPU" gate="A" pin="1"/>
-<wire x1="48.26" y1="33.02" x2="40.64" y2="33.02" width="0.1524" layer="91"/>
+<wire x1="53.34" y1="33.02" x2="40.64" y2="33.02" width="0.1524" layer="91"/>
 <label x="35.56" y="33.02" size="1.778" layer="95"/>
+<pinref part="MPU" gate="A" pin="1"/>
 </segment>
 </net>
 <net name="MPUSCL" class="0">
@@ -15224,9 +15229,9 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <label x="2.54" y="66.04" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="MPU" gate="A" pin="2"/>
-<wire x1="48.26" y1="30.48" x2="40.64" y2="30.48" width="0.1524" layer="91"/>
-<label x="35.56" y="30.48" size="1.778" layer="95"/>
+<pinref part="MPU" gate="A" pin="3"/>
+<wire x1="53.34" y1="27.94" x2="40.64" y2="27.94" width="0.1524" layer="91"/>
+<label x="35.56" y="27.94" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="MPUSDA" class="0">
@@ -15236,9 +15241,9 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <label x="2.54" y="63.5" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="MPU" gate="A" pin="3"/>
-<wire x1="48.26" y1="27.94" x2="40.64" y2="27.94" width="0.1524" layer="91"/>
-<label x="35.56" y="27.94" size="1.778" layer="95"/>
+<pinref part="MPU" gate="A" pin="2"/>
+<wire x1="53.34" y1="30.48" x2="40.64" y2="30.48" width="0.1524" layer="91"/>
+<label x="35.56" y="30.48" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="SND_D" class="0">
@@ -15344,6 +15349,13 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <pinref part="VIN_13" gate="A" pin="11"/>
 <wire x1="-2.54" y1="58.42" x2="5.08" y2="58.42" width="0.1524" layer="91"/>
 <label x="5.08" y="58.42" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="5V" class="0">
+<segment>
+<pinref part="MPU" gate="A" pin="5"/>
+<wire x1="53.34" y1="22.86" x2="40.64" y2="22.86" width="0.1524" layer="91"/>
+<label x="38.1" y="22.86" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>

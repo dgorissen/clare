@@ -15098,26 +15098,26 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 </net>
 <net name="TXEVO" class="0">
 <segment>
-<pinref part="LV_A_OE" gate="A" pin="2"/>
-<wire x1="71.12" y1="76.2" x2="63.5" y2="76.2" width="0.1524" layer="91"/>
-<label x="55.88" y="76.2" size="1.778" layer="95"/>
-</segment>
-<segment>
 <pinref part="GND-12" gate="A" pin="9"/>
 <wire x1="-20.32" y1="63.5" x2="-30.48" y2="63.5" width="0.1524" layer="91"/>
 <label x="-38.1" y="63.5" size="1.778" layer="95"/>
 </segment>
+<segment>
+<wire x1="48.26" y1="2.54" x2="40.64" y2="2.54" width="0.1524" layer="91"/>
+<label x="38.1" y="2.54" size="1.778" layer="95"/>
+<pinref part="EVO" gate="A" pin="1"/>
+</segment>
 </net>
 <net name="RXEVO" class="0">
-<segment>
-<pinref part="LV_A_OE" gate="A" pin="3"/>
-<wire x1="71.12" y1="73.66" x2="63.5" y2="73.66" width="0.1524" layer="91"/>
-<label x="55.88" y="73.66" size="1.778" layer="95"/>
-</segment>
 <segment>
 <pinref part="GND-12" gate="A" pin="10"/>
 <wire x1="-20.32" y1="60.96" x2="-30.48" y2="60.96" width="0.1524" layer="91"/>
 <label x="-38.1" y="60.96" size="1.778" layer="95"/>
+</segment>
+<segment>
+<wire x1="48.26" y1="0" x2="40.64" y2="0" width="0.1524" layer="91"/>
+<label x="38.1" y="0" size="1.778" layer="95"/>
+<pinref part="EVO" gate="A" pin="2"/>
 </segment>
 </net>
 <net name="EARS" class="0">
@@ -15166,30 +15166,6 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <wire x1="132.08" y1="-22.86" x2="132.08" y2="-27.94" width="0.1524" layer="91"/>
 <junction x="132.08" y="-22.86"/>
 <label x="132.08" y="-30.48" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="TXEVO5" class="0">
-<segment>
-<pinref part="HV_B_GND" gate="A" pin="2"/>
-<wire x1="86.36" y1="76.2" x2="93.98" y2="76.2" width="0.1524" layer="91"/>
-<label x="93.98" y="76.2" size="1.778" layer="95"/>
-</segment>
-<segment>
-<wire x1="48.26" y1="2.54" x2="40.64" y2="2.54" width="0.1524" layer="91"/>
-<label x="38.1" y="2.54" size="1.778" layer="95"/>
-<pinref part="EVO" gate="A" pin="1"/>
-</segment>
-</net>
-<net name="RXEVO5" class="0">
-<segment>
-<pinref part="HV_B_GND" gate="A" pin="3"/>
-<wire x1="86.36" y1="73.66" x2="93.98" y2="73.66" width="0.1524" layer="91"/>
-<label x="93.98" y="73.66" size="1.778" layer="95"/>
-</segment>
-<segment>
-<wire x1="48.26" y1="0" x2="40.64" y2="0" width="0.1524" layer="91"/>
-<label x="38.1" y="0" size="1.778" layer="95"/>
-<pinref part="EVO" gate="A" pin="2"/>
 </segment>
 </net>
 <net name="N$2" class="0">

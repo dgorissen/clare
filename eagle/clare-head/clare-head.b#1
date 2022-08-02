@@ -3,7 +3,7 @@
 <eagle version="9.6.2">
 <drawing>
 <settings>
-<setting alwaysvectorfont="yes"/>
+<setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
 <grid distance="1" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="1" altunitdist="mm" altunit="mm"/>
@@ -2343,7 +2343,7 @@ design rules under a new name.</description>
 <element name="R6" library="SparkFun-Resistors" library_urn="urn:adsk.eagle:library:532" package="AXIAL-0.3" package3d_urn="urn:adsk.eagle:package:39658/1" value="2.2k" x="6.42" y="73.06" smashed="yes" rot="R90">
 <attribute name="NAME" x="5.404" y="73.06" size="0.6096" layer="25" font="vector" ratio="20" rot="R90" align="bottom-center"/>
 <attribute name="PROD_ID" value="RES-12182" x="75" y="101" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="VALUE" x="7.436" y="73.06" size="0.6096" layer="27" font="vector" ratio="20" rot="R90" align="top-center"/>
+<attribute name="VALUE" x="7.436" y="73.06" size="0.6096" layer="25" font="vector" ratio="20" rot="R90" align="top-center"/>
 </element>
 <element name="R7" library="SparkFun-Resistors" library_urn="urn:adsk.eagle:library:532" package="AXIAL-0.3" package3d_urn="urn:adsk.eagle:package:39658/1" value="33" x="2.42" y="72.9" smashed="yes" rot="R90">
 <attribute name="NAME" x="1.404" y="72.9" size="0.6096" layer="25" font="vector" ratio="20" rot="R90" align="bottom-center"/>
@@ -2720,6 +2720,8 @@ design rules under a new name.</description>
 <wire x1="46.9392" y1="37.0332" x2="44.8056" y2="34.8996" width="0.1524" layer="16"/>
 <wire x1="19.05" y1="7.62" x2="19" y2="7.57" width="0.1524" layer="16"/>
 <wire x1="46.9392" y1="37.0332" x2="47" y2="37.08" width="0.1524" layer="16"/>
+<contactref element="MPU" pad="5"/>
+<wire x1="47" y1="37.08" x2="47" y2="51.08" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$2">
 <contactref element="VIN_13" pad="2"/>
@@ -3013,9 +3015,6 @@ design rules under a new name.</description>
 <wire x1="19.05" y1="27.8892" x2="21.1836" y2="25.7556" width="0.1524" layer="1"/>
 <wire x1="48.1584" y1="3.048" x2="48.27" y2="3" width="0.1524" layer="1"/>
 <wire x1="19.05" y1="27.8892" x2="19" y2="27.89" width="0.1524" layer="1"/>
-</signal>
-<signal name="5V">
-<contactref element="MPU" pad="5"/>
 </signal>
 </signals>
 <mfgpreviewcolors>

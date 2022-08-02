@@ -14720,9 +14720,9 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <attribute name="NAME" x="60.96" y="92.964" size="1.778" layer="95" font="vector" align="bottom-center"/>
 <attribute name="VALUE" x="60.96" y="89.916" size="1.778" layer="96" font="vector" align="top-center"/>
 </instance>
-<instance part="R2" gate="G$1" x="76.2" y="-2.54" smashed="yes" rot="R180">
-<attribute name="NAME" x="76.2" y="-4.064" size="1.778" layer="95" font="vector" rot="R180" align="bottom-center"/>
-<attribute name="VALUE" x="76.2" y="-1.016" size="1.778" layer="96" font="vector" rot="R180" align="top-center"/>
+<instance part="R2" gate="G$1" x="93.98" y="-2.54" smashed="yes" rot="R180">
+<attribute name="NAME" x="93.98" y="-4.064" size="1.778" layer="95" font="vector" rot="R180" align="bottom-center"/>
+<attribute name="VALUE" x="93.98" y="-1.016" size="1.778" layer="96" font="vector" rot="R180" align="top-center"/>
 </instance>
 <instance part="EVO" gate="A" x="33.02" y="-5.08" smashed="yes">
 <attribute name="NAME" x="26.67" y="3.175" size="1.778" layer="95"/>
@@ -14866,8 +14866,8 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 </segment>
 <segment>
 <pinref part="R2" gate="G$1" pin="1"/>
-<wire x1="81.28" y1="-2.54" x2="83.82" y2="-2.54" width="0.1524" layer="91"/>
-<label x="81.28" y="-2.54" size="1.778" layer="95"/>
+<wire x1="99.06" y1="-2.54" x2="83.82" y2="-2.54" width="0.1524" layer="91"/>
+<label x="101.6" y="-2.54" size="1.778" layer="95"/>
 </segment>
 <segment>
 <pinref part="EVO" gate="A" pin="3"/>
@@ -15073,6 +15073,11 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <pinref part="FACE" gate="A" pin="5"/>
 <label x="-20.32" y="-22.86" size="1.778" layer="95"/>
 </segment>
+<segment>
+<pinref part="DH11_LDR+-_IRT+-_SNDDA" gate="A" pin="2"/>
+<wire x1="66.04" y1="0" x2="60.96" y2="0" width="0.1524" layer="91"/>
+<label x="55.88" y="0" size="1.778" layer="95"/>
+</segment>
 </net>
 <net name="N$2" class="0">
 <segment>
@@ -15264,9 +15269,9 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <segment>
 <label x="55.88" y="-2.54" size="1.778" layer="95"/>
 <pinref part="R2" gate="G$1" pin="2"/>
-<wire x1="71.12" y1="-2.54" x2="66.04" y2="-2.54" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="-2.54" x2="66.04" y2="-2.54" width="0.1524" layer="91"/>
 <wire x1="66.04" y1="-2.54" x2="60.96" y2="-2.54" width="0.1524" layer="91"/>
-<wire x1="71.12" y1="-2.54" x2="73.66" y2="-2.54" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="-2.54" x2="73.66" y2="-2.54" width="0.1524" layer="91"/>
 <pinref part="DH11_LDR+-_IRT+-_SNDDA" gate="A" pin="3"/>
 <junction x="66.04" y="-2.54"/>
 </segment>
@@ -15339,13 +15344,6 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <pinref part="VIN_13" gate="A" pin="11"/>
 <wire x1="-2.54" y1="58.42" x2="5.08" y2="58.42" width="0.1524" layer="91"/>
 <label x="5.08" y="58.42" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="LDR+" class="0">
-<segment>
-<pinref part="DH11_LDR+-_IRT+-_SNDDA" gate="A" pin="2"/>
-<wire x1="66.04" y1="0" x2="60.96" y2="0" width="0.1524" layer="91"/>
-<label x="55.88" y="0" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
