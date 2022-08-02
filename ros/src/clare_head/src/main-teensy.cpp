@@ -54,7 +54,11 @@ void sound_int_handler(){
 }
 
 void setup() {
+  // For logging
   Serial.begin(BAUD);
+  
+  // For readin from the dht attached to the other microcontroller
+  Serial4.begin(BAUD);
 
   // Available levels are:
   // * 0 - LOG_LEVEL_SILENT     no output
@@ -108,7 +112,23 @@ void set_ears(CRGB::HTMLColorCode c) {
   }
 }
 
-void smell(float &hum, float &temp) {
+void smell_serial(float &hum, float &temp) {
+  String shum, stemp;
+
+  if (Serial4.available() > 0) {
+    shum = Serial4.readStringUntil(',');
+    stemp = Serial4.readStringUntil('\n');
+  }
+  //Log.info("DHT serial read: %s - %s\n", shum.c_str(), stemp.c_str());
+
+  hum = atof(shum.c_str());
+  temp = atof(stemp.c_str());
+  
+  if (hum < 1 || isnan(hum)) hum = -1;
+  if (temp < 1 || isnan(temp)) temp = -1;
+}
+
+void smell_dhtlib(float &hum, float &temp) {
   hum = nose.readHumidity();
   temp = nose.readTemperature();
 
@@ -172,6 +192,32 @@ int ctr = 0;
 void loop2() {
   delay(1000);
   Serial.println("foo");
+  String shum, stemp;
+
+//  while (Serial4.available() > 0) {
+//    char c = Serial4.read();
+//    Serial.print("char:");
+//    Serial.print(c);
+//    Serial.println();
+//  }
+
+  //if (Serial4.available() > 0) {
+   // String s = Serial4.readString();
+   // Serial.println(s);
+  //}
+
+
+///  if (Serial4.available() > 0) {
+  //  shum = Serial4.readStringUntil(',');
+   // stemp = Serial4.readStringUntil('\n');
+   // Serial.println("---");
+    //Serial.println(atof(shum.c_str()));
+    //Serial.println(atof(stemp.c_str()));
+  //}
+
+  float h,t;
+  smell_serial(h,t);
+  Log.error("Read: %D, %D\n", h, t);
 }
 
 void loop() {
@@ -187,7 +233,7 @@ void loop() {
 
   mpu.readState(w, x, y, z, ax, ay, az);
   evo.readState(x1, x2, x3, x4);
-  smell(hum, temp);
+  smell_serial(hum, temp);
   light = read_ldr();
 
   if(snd > 0) {
