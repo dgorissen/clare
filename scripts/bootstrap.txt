@@ -7,6 +7,8 @@ In raspi-config enable:
   opengl: "7. Advanced Options" – "A8 GL Driver" – "G2 GL (Fake KMS)"
   set hostname to clare
 
+ensure /etc/hosts also resolves clare correctly
+
 # Increase swap to 2GB by changing the file below to CONF_SWAPSIZE=2048:
 sudo vi /etc/dphys-swapfile
 sudo /etc/init.d/dphys-swapfile restart swapon -s
