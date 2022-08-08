@@ -3,7 +3,8 @@
     <!-- TODO: set in parameters somewhere
     Device map:
 
-    /dev/ttyACM0 - Teensyduino_USB_Serial_8880670   -> teensy usb -> tracks
+    /dev/ttyACM0 - Teensyduino_USB_Serial_11263870   -> teensy usb -> head
+    /dev/ttyACM1 - Teensyduino_USB_Serial_8880670   -> teensy usb -> tracks
     /dev/ttyUSB0 - FTDI_Quad_RS232-HS               -> teensy serial -> tracks
     /dev/ttyUSB1 - FTDI_Quad_RS232-HS               -> arduino serial -> middle
     /dev/ttyUSB2 - FTDI_Quad_RS232-HS               
