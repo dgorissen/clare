@@ -5,12 +5,12 @@
 #include <FastLED.h>
 #include <DHT.h>
 #include <IRremote.h>
-// #include <ros.h>
-// #include <std_msgs/String.h>
-// #include <std_msgs/Empty.h>
-// #include <std_msgs/Bool.h>
-// #include <std_msgs/Header.h>
-// #include <clare_head/FaceMessage.h>
+#include <ros.h>
+#include <std_msgs/String.h>
+#include <std_msgs/Empty.h>
+#include <std_msgs/Bool.h>
+#include <std_msgs/Header.h>
+#include <clare_head/FaceMessage.h>
 #include "clareevo.h"
 #include "clarempu.h"
 
@@ -28,11 +28,11 @@ const int NUM_EAR_LEDS = 4;
 CRGB ear_leds[NUM_EAR_LEDS];
 
 // Fwd declarations
-// void face_callback(const clare_head::FaceMessage& face_msg);
+void face_callback(const clare_head::FaceMessage& face_msg);
 
-// ros::NodeHandle nh;
-// ros::Subscriber<clare_head::FaceMessage> face_sub("clare/head/face",
-// face_callback);
+ros::NodeHandle nh;
+ros::Subscriber<clare_head::FaceMessage> face_sub("clare/head/face",
+face_callback);
 
 // clare_head::FaceMessage face_msg;
 Face face = Face(0, 2, 3, 1);
@@ -53,17 +53,25 @@ void sound_int_handler(){
   }
 }
 
+void setup_ros(){
+  nh.initNode();
+  nh.subscribe(face_sub);
+}
+
 void setup() {
   // For logging
   Serial.begin(BAUD);
   
-  // For readin from the dht attached to the other microcontroller
+  // Other serial output
+  Serial1.begin(BAUD);
+
+  // For reading from the dht attached to the other microcontroller
   Serial4.begin(BAUD);
 
   // Available levels are:
   // * 0 - LOG_LEVEL_SILENT     no output
   // * 1 - LOG_LEVEL_FATAL      fatal errors
-  // * 2 - LOG_LEVEL_ERROR      all errors
+  // * 2 - LOG_LEVEL_ERROR      all errors 
   // * 3 - LOG_LEVEL_WARNING    errors, and warnings
   // * 4 - LOG_LEVEL_NOTICE     errors, warnings and notices
   // * 5 - LOG_LEVEL_TRACE      errors, warnings, notices & traces
@@ -90,8 +98,7 @@ void setup() {
 
   IrSender.begin(IRT_PIN, ENABLE_LED_FEEDBACK);
 
-  // nh.initNode();
-  // nh.subscribe(face_sub);
+  setup_ros();
 }
 
 int read_sound() {
@@ -143,10 +150,10 @@ void send_ir(){
   IrSender.sendNEC(sAddress, sCommand, sRepeats);
 }
 
-// void face_callback(const clare_head::FaceMessage& face_msg){
-//   const char * expression  = face_msg.expression;
-//   face.setExpression(expression);
-// }
+void face_callback(const clare_head::FaceMessage& face_msg){
+  const char * expression  = face_msg.expression;
+  face.setExpression(expression);
+}
 
 void loopEmotions(const int wait) {
   face.happy();
@@ -188,39 +195,7 @@ bool snd_heard;
 float light;
 int ctr = 0;
 
-
-void loop2() {
-  delay(1000);
-  Serial.println("foo");
-  String shum, stemp;
-
-//  while (Serial4.available() > 0) {
-//    char c = Serial4.read();
-//    Serial.print("char:");
-//    Serial.print(c);
-//    Serial.println();
-//  }
-
-  //if (Serial4.available() > 0) {
-   // String s = Serial4.readString();
-   // Serial.println(s);
-  //}
-
-
-///  if (Serial4.available() > 0) {
-  //  shum = Serial4.readStringUntil(',');
-   // stemp = Serial4.readStringUntil('\n');
-   // Serial.println("---");
-    //Serial.println(atof(shum.c_str()));
-    //Serial.println(atof(stemp.c_str()));
-  //}
-
-  float h,t;
-  smell_serial(h,t);
-  Log.error("Read: %D, %D\n", h, t);
-}
-
-void loop() {
+void loop_test() {
   ++ctr;
   snd_heard = false;
 
@@ -253,5 +228,18 @@ void loop() {
 
   send_ir();
 
+  Serial1.print("Iteration ");
+  Serial1.print(ctr);
+  Serial1.println();
+  
   delay(100);
+}
+
+void loop_ros() {
+  nh.spinOnce();
+  delay(50);
+}
+
+void loop(){
+  loop_ros();
 }
