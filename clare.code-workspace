@@ -27,6 +27,13 @@
 			"__tree": "cpp",
 			"set": "cpp"
 		},
-		"python.defaultInterpreterPath": "python3"
+		"python.defaultInterpreterPath": "python3",
+		"files.watcherExclude": {
+			"**/.git/objects/**": true,
+			"**/.git/subtree-cache/**": true,
+			"**/node_modules/*/**": true,
+			"**/ros/build/*/**": true
+		  }
+		
 	}
 }
