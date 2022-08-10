@@ -8,6 +8,7 @@ build_arch ?= $(shell arch)
 real_arch = $(shell arch)
 
 simplemode ?= $(shell simplemode)
+tag := $(or $(tag),"latest")
 
 ifeq ($(build_arch), armv7l)
 	vinodist=raspbian
@@ -20,13 +21,13 @@ build:
 ifeq ($(build_arch), $(real_arch))
 	echo "=== Building for HOST"
 	sleep 2
-	docker build -t dgorissen/clare \
+	docker build -t dgorissen/clare:${tag} \
 	--build-arg vinodist=${vinodist} \
 	.
 else
 	echo "=== Building for ARM, vinodist is ${vinodist}"
 	sleep 2
-	docker buildx build -t dgorissen/clare \
+	docker buildx build -t dgorissen/clare:${tag} \
 	--build-arg vinodist=${vinodist} \
 	--platform linux/arm/v7 \
 	--progress=plain \
@@ -54,7 +55,7 @@ runpi:
 	-v /run/udev/data:/run/udev/data \
 	--env LD_LIBRARY_PATH=/opt/vc/lib \
 	--name clare \
-	dgorissen/clare $(mode)
+	dgorissen/clare:${tag} $(mode)
 
 	# Unfortunately privileged, /dev, and host network is all needed
 	# so that the neural compute stick  will work inside docker
@@ -69,10 +70,10 @@ execshell:
 	docker exec -e DISPLAY=${DISPLAY} -it clare bash
 
 push:
-	docker push dgorissen/clare
+	docker push dgorissen/clare:${tag}
 
 pull:
-	docker pull dgorissen/clare
+	docker pull dgorissen/clare:${tag}
 
 clean:
 	docker builder prune -a -f
