@@ -1,10 +1,10 @@
-FROM ros:noetic@sha256:e66897669f09dd7c3d68ea4c4fe34df26ca125964acb093d94837a7b2e1f8475
+FROM ros:noetic@sha256:8d5b98bb3e6cdc51c8fc846c701c121f937ede2bd2b6986b6a42f962ccf9cb0f
 
 SHELL ["/bin/bash", "-c"]
 
 # Ros packages
 RUN apt-get update
-RUN apt-get install -y \
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
       ros-noetic-desktop \
       python3-rosdep \
       python3-rosinstall \
@@ -12,7 +12,7 @@ RUN apt-get install -y \
       python3-wstool build-essential
 
 # Utils
-RUN apt-get install -y wget vim keychain tree screen git software-properties-common feh
+RUN apt-get install -y wget vim keychain tree screen git software-properties-common feh curl
   
 #  Openvino dependencies
 RUN apt-get install -y build-essential \
@@ -20,7 +20,7 @@ RUN apt-get install -y build-essential \
    libtiff-dev libavcodec-dev libavformat-dev \
    libswscale-dev libv4l-dev libxvidcore-dev \
    libx264-dev libgtk-3-dev libcanberra-gtk* \
-   libatlas-base-dev gfortran python3-dev 
+   libatlas-base-dev gfortran python3-dev
 
 # upgrade cmake to avoid crosscompile bug in the ubuntu bundled cmake (3.16)
 RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null && \
@@ -38,20 +38,22 @@ RUN apt-get update && apt-get install -y  \
   festival festvox-don festvox-us-slt-hts festvox-rablpc16k festvox-kallpc16k festvox-kdlpc16k \
   libttspico-utils espeak flite flac \
   teensy-loader-cli libncurses5 arduino arduino-builder \
-  ir-keytable libinput-tools
-
+  ir-keytable libinput-tools \
+  g++-arm-linux-gnueabihf gcc-arm-linux-gnueabihf libgirepository1.0-dev libgl1-mesa-glx
+  
 # More ros libs
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y \
   ros-noetic-imu-filter-madgwick ros-noetic-rtabmap-ros ros-noetic-robot-localization \
-  ros-noetic-vision-msgs ros-noetic-sensor-msgs \
+  ros-noetic-vision-msgs ros-noetic-sensor-msgs ros-noetic-geometry-msgs\
   ros-noetic-sound-play ros-noetic-audio-play \
   ros-noetic-speech-recognition-msgs ros-noetic-audio-capture \
   ros-noetic-image-proc ros-noetic-rviz ros-noetic-realsense2-camera \
   ros-noetic-app-manager ros-noetic-catkin-virtualenv \
-  ros-noetic-rosserial-python ros-noetic-rosserial-arduino ros-noetic-rosserial-client
+  ros-noetic-rosserial-python ros-noetic-rosserial-arduino ros-noetic-rosserial-client \
+  ros-noetic-moveit-*
 
 # nodejs & vue
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - && \
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - && \
   apt-get install -y nodejs && \
   npm install -g @vue/cli
 
@@ -79,6 +81,8 @@ RUN echo 'dgorissen:test' | chpasswd
 
 # Enable passwordless sudo
 RUN echo '%dgorissen ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+RUN apt-get install -y curl
 
 USER dgorissen
 WORKDIR /home/dgorissen
@@ -142,6 +146,8 @@ RUN pip install adafruit-extended-bus adafruit-circuitpython-bme680 \
     rpi_ws281x adafruit-circuitpython-neopixel adafruit-blinka evdev \
     adafruit-circuitpython-neopixel-spi
 
+RUN pip install gobject PyGObject playsound gtts defusedxml
+
 # Insteall respeaker repos
 RUN git clone https://github.com/respeaker/usb_4_mic_array.git && \
   git clone https://github.com/respeaker/pocketsphinx-data.git && \
@@ -203,17 +209,12 @@ RUN wget https://storage.openvinotoolkit.org/repositories/openvino/packages/2021
   tar -xf ${vinofile}.tgz && \
   mv ${vinofile} openvino
 
-RUN cd openvino && \
-  source bin/setupvars.sh && \
-  mkdir build_samples && cd build_samples && \
-  cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-march=armv7-a" ~/openvino/deployment_tools/inference_engine/samples/cpp && \
-  make -j 2
-
-# TODO: new commands, to be merged into the above at next upgrade
-USER root
-RUN apt-get install -y libgirepository1.0-dev libgl1-mesa-glx ros-noetic-moveit-*
-USER dgorissen
-RUN pip install gobject PyGObject playsound gtts defusedxml
+# TODO: cross compilation issues
+# RUN cd openvino && \
+#   source bin/setupvars.sh && \
+#   mkdir build_samples && cd build_samples && \
+#   cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++ -DCMAKE_CXX_FLAGS="-march=armv7-a" ~/openvino/deployment_tools/inference_engine/samples/cpp && \
+#   make -j 2
 
 RUN echo -e '\n### \n\
 source ~/openvino/bin/setupvars.sh \n\

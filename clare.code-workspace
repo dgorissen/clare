@@ -33,7 +33,7 @@
 			"**/.git/subtree-cache/**": true,
 			"**/node_modules/*/**": true,
 			"**/ros/build/*/**": true
-		  }
-		
+		  },
+		"makefile.extensionOutputFolder": "./.vscode"
 	}
 }

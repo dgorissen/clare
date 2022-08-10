@@ -8,7 +8,7 @@ build_arch ?= $(shell arch)
 real_arch = $(shell arch)
 
 simplemode ?= $(shell simplemode)
-tag := $(or $(tag),"latest")
+tag := $(or $(tag),latest)
 
 ifeq ($(build_arch), armv7l)
 	vinodist=raspbian
