@@ -19,7 +19,9 @@
 #include <sensor_msgs/Imu.h>
 #include <clare_head/FaceMessage.h>
 #include <clare_head/EarsMessage.h>
-#include <clare_head/DHT11Message.h>
+#include <clare_head/NoseMessage.h>
+#include <clare_head/IRMessage.h>
+#include <clare_head/EvoMessage.h>
 #include "clareevo.h"
 #include "clarempu.h"
 
@@ -46,8 +48,12 @@ class TeensyHardware1 : public ArduinoHardware {
   TeensyHardware1():ArduinoHardware(&Serial1, BAUD){};
 };
 
+// Fwd declarations
+void face_callback(const clare_head::FaceMessage& face_msg);
+void ears_callback(const clare_head::EarsMessage& ears_msg);
+void ir_callback(const clare_head::IRMessage& ir_msg);
+
 ros::NodeHandle_<TeensyHardware1> nh;
-ros::NodeHandle nh;
 ros::Subscriber<clare_head::FaceMessage> face_sub("clare/head/face", face_callback);
 ros::Subscriber<clare_head::EarsMessage> ears_sub("clare/head/ears", ears_callback);
 ros::Subscriber<clare_head::IRMessage> ir_sub("clare/head/ir", ir_callback);
@@ -85,7 +91,8 @@ void sound_int_handler(){
   if((cur_snd - last_snd) > debounce_snd_time){
     last_snd = millis();
     snd = 1;
-    noise_pub.publish(true);
+    noise_msg.data = true;
+    noise_pub.publish(&noise_msg);
   }
 }
 
@@ -98,7 +105,7 @@ void setup() {
   // For logging
   Serial.begin(BAUD);
   
-  // Other serial output
+  // ROS / Other serial output
   Serial1.begin(BAUD);
 
   // For reading from the dht attached to the other microcontroller
@@ -148,20 +155,20 @@ float read_ldr(){
   return analog;
 }
 
-void set_ears(CRGB::HTMLColorCode c) {
-  set_ears(c,c,c,c);
-}
-
-void set_ears(CRGB::HTMLColorCode earCol, CRGB::HTMLColorCode antCol) {
-  set_ears(earCol,antCol,earCol,antCol);
-}
-
-void set_ears(CRGB c1, CRGB c2, CRGB c3, CRGB c4) {
+void set_ears(const CRGB c1, const CRGB c2, const CRGB c3, const CRGB c4) {
   ear_leds[0] = c1;
   ear_leds[1] = c2;
   ear_leds[2] = c3;
   ear_leds[3] = c4;
   FastLED.show();
+}
+
+void set_all_ears(const CRGB c) {
+  set_ears(c,c,c,c);
+}
+
+void set_ears_and_antennae(const CRGB earCol, const CRGB antCol) {
+  set_ears(earCol,antCol,earCol,antCol);
 }
 
 void smell_serial(float &hum, float &temp) {
@@ -209,8 +216,8 @@ void ears_callback(const clare_head::EarsMessage& ears_msg){
 }
 
 void ir_callback(const clare_head::IRMessage& ir_msg) {
-  #TODO
-  unit8 cmd = ir_msg.cmd;
+  // TODO
+  uint8_t cmd = ir_msg.cmd;
   send_ir();
 }
 
@@ -280,9 +287,9 @@ void loop_test() {
            w, x, y, z, ax, ay, az, x1, x2, x3, x4, hum, temp, light, snd_heard);
 
   if (ctr % 2) {
-    set_ears(CRGB::Blue);
+    set_all_ears(CRGB::Blue);
   } else {
-    set_ears(CRGB::Green);
+    set_all_ears(CRGB::Green);
   }
 
   send_ir();
@@ -309,33 +316,34 @@ void loop_ros() {
   }
 
   if(noseChrono.hasPassed(2000)){
-    noseChrono.reset();
+    noseChrono.restart();
     smell_serial(hum, temp);
     nose_msg.temp = temp;
     nose_msg.humidity = hum;
-    nose_pub.publish(nose_msg);
+    nose_pub.publish(&nose_msg);
   }
 
   if(evoChrono.hasPassed(500)){
-    evoChrono.reset();
+    evoChrono.restart();
     evo.readState(x1, x2, x3, x4);
     evo_msg.x1 = x1;
     evo_msg.x2 = x2;
     evo_msg.x3 = x3;
     evo_msg.x4 = x4; 
-    evo_pub.publish(evo_msg);
+    evo_pub.publish(&evo_msg);
   }
 
   if(lightChrono.hasPassed(5000)){
-    lightChrono.reset();
+    lightChrono.restart();
     light = read_ldr();
-    light_pub(light);
+    light_msg.data = light;
+    light_pub.publish(&light_msg);
   }
 
   if(imuChrono.hasPassed(250)){
-    imuChrono.reset();
+    imuChrono.restart();
     mpu.readState(w, x, y, z, ax, ay, az);
-    imu_msg.header.stamp = millis();
+    imu_msg.header.stamp = nh.now();
     imu_msg.header.seq = ctr;
     imu_msg.orientation.x = x;
     imu_msg.orientation.y = y;
@@ -344,7 +352,7 @@ void loop_ros() {
     imu_msg.linear_acceleration.x = ax;
     imu_msg.linear_acceleration.y = ay;
     imu_msg.linear_acceleration.z = az;
-    imu_pub.publish(imu_msg);
+    imu_pub.publish(&imu_msg);
   }
 
   nh.spinOnce();
@@ -354,4 +362,5 @@ void loop_ros() {
 
 void loop(){
   loop_ros();
+  //loop_test();
 }

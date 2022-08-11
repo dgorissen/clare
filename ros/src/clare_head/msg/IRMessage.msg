@@ -1,2 +1,2 @@
-unit8 cmd
+uint8 cmd
 
