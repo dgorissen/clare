@@ -1,4 +1,4 @@
-FROM ros:noetic@sha256:8d5b98bb3e6cdc51c8fc846c701c121f937ede2bd2b6986b6a42f962ccf9cb0f
+FROM ros:noetic@sha256:dc89df4c67ffb8e35dcb232a71956399e39b3575cfa1e8389e74e1d5a0782638
 
 SHELL ["/bin/bash", "-c"]
 
@@ -43,7 +43,7 @@ RUN apt-get update && apt-get install -y  \
   
 # More ros libs
 RUN apt-get update && apt-get install -y \
-  ros-noetic-imu-filter-madgwick ros-noetic-rtabmap-ros ros-noetic-robot-localization \
+  ros-noetic-imu-filter-madgwick ros-noetic-robot-localization \
   ros-noetic-vision-msgs ros-noetic-sensor-msgs ros-noetic-geometry-msgs\
   ros-noetic-sound-play ros-noetic-audio-play \
   ros-noetic-speech-recognition-msgs ros-noetic-audio-capture \
@@ -81,8 +81,6 @@ RUN echo 'dgorissen:test' | chpasswd
 
 # Enable passwordless sudo
 RUN echo '%dgorissen ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-
-RUN apt-get install -y curl
 
 USER dgorissen
 WORKDIR /home/dgorissen
@@ -139,7 +137,7 @@ RUN pip install \
   netifaces pyopengl pyopengl_accelerate empy \
   pyusb click pyaudio pydub rpi.gpio \
   pocketsphinx webrtcvad respeaker hidapi speechrecognition \ 
-  requests-oauthlib lxml scikit-learn catkin-tools
+  requests-oauthlib lxml catkin-tools
 
 RUN pip install adafruit-extended-bus adafruit-circuitpython-bme680 \
     adafruit-circuitpython-pca9685 adafruit-circuitpython-servokit \
@@ -147,6 +145,9 @@ RUN pip install adafruit-extended-bus adafruit-circuitpython-bme680 \
     adafruit-circuitpython-neopixel-spi
 
 RUN pip install gobject PyGObject playsound gtts defusedxml
+
+# TODO takes forever, does not complete..
+# RUN pip install scikit-learn
 
 # Insteall respeaker repos
 RUN git clone https://github.com/respeaker/usb_4_mic_array.git && \
@@ -210,11 +211,13 @@ RUN wget https://storage.openvinotoolkit.org/repositories/openvino/packages/2021
   mv ${vinofile} openvino
 
 # TODO: cross compilation issues
-# RUN cd openvino && \
-#   source bin/setupvars.sh && \
-#   mkdir build_samples && cd build_samples && \
-#   cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++ -DCMAKE_CXX_FLAGS="-march=armv7-a" ~/openvino/deployment_tools/inference_engine/samples/cpp && \
-#   make -j 2
+RUN cd openvino && \
+  source bin/setupvars.sh && \
+  mkdir build_samples && cd build_samples && \
+  cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-march=armv7-a" ~/openvino/deployment_tools/inference_engine/samples/cpp && \
+  make -j 2
+
+# cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++ -DCMAKE_CXX_FLAGS="-march=armv7-a" ~/openvino/deployment_tools/inference_engine/samples/cpp && \
 
 RUN echo -e '\n### \n\
 source ~/openvino/bin/setupvars.sh \n\
