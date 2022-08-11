@@ -281,7 +281,7 @@ def set_face(expression):
 
 @app.route("/head/ears/<col>")
 @is_connected
-def set_face(expression):
+def set_face(col):
     STATE.head.set_ears(col)
     return "", 200
 
