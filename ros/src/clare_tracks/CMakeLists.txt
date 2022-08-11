@@ -15,6 +15,7 @@ add_message_files(
    EncoderMessage.msg
    JoystickInput.msg
    MotorSpeeds.msg
+   RCCommandMessage.msg
 )
 
 generate_messages(

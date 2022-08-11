@@ -409,7 +409,7 @@ void rc_mode(){
 		rc_msg.ch3 = ch3;
 		rc_msg.ch4 = ch4;
 		rc_msg.ch5 = ch5;
-		rc_pub.publish(rc_msg);
+		rc_pub.publish(&rc_msg);
 	}
   } else {
 	  Log.trace("Failed to read a good RC packet");
