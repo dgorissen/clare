@@ -20,6 +20,8 @@ from sensor_msgs.msg import Image
 from vision_msgs.msg import Detection2DArray
 from speech_recognition_msgs.msg import SpeechRecognitionCandidates
 from sensor_msgs.msg import CompressedImage
+from clare_head.msg import NoseMessage, EvoMessage, FaceMessage, EarsMessage, IRMessage
+from sensor_msgs.msg import Imu
 
 """
 Simple wrapper classes to facilitate data transfer from ROS to the browser
@@ -199,6 +201,62 @@ class ClareTop(BaseState):
     def button_cb(self, msg):
         self._state[msg.key] = msg.value
         self.update_ts_to_now()
+
+
+class ClareHead(BaseState):
+    def __init__(self):
+        super(ClareHead, self).__init__()
+        rospy.Subscriber("/clare/head/noise", Bool, self._noise_cb)
+        rospy.Subscriber("/clare/head/nose", NoseMessage, self._nose_cb)
+        rospy.Subscriber("/clare/head/evo", EvoMessage, self._evo_cb)
+        rospy.Subscriber("/clare/imu", Imu, self._imu_cb)
+        rospy.Subscriber("/clare/light", Float32, self._light_cb)
+
+        self._face_pub = rospy.Publisher("/clare/head/face", FaceMessage, queue_size=10)
+        self._ears_pub = rospy.Publisher("/clare/head/ears", EarsMessage, queue_size=10)
+        self._ir_pub = rospy.Publisher("/clare/head/ir", IRMessage, queue_size=10)
+
+    def _noise_cb(self, msg):
+        self._state["noise"] = msg.data
+        self.update_ts_to_now()
+
+    def _nose_cb(self, msg):
+        self._state["temp"] = msg.temp
+        self._state["humidity"] = msg.humidity
+        self.update_ts_to_now()
+
+    def _evo_cb(self, msg):
+        self._state["evo"] = (msg.x1 + msg.x2 + msg.x3 + msg.x4)/4 
+        self.update_ts_to_now()
+
+    def _imu_cb(self, msg):
+        self._state["x"] = msg.x
+        self._state["y"] = msg.y
+        self._state["z"] = msg.z
+        self._state["w"] = msg.w
+        self.update_ts_to_now()
+
+    def _light_cb(self, msg):
+        self._state["light"] = msg.data
+
+    def set_expression(self, exp):
+        m = FaceMessage()
+        m.expression = exp
+        self._face_pub.publish(m)
+
+    def set_ears(self, cstr):
+        c = int(cstr, base=16);
+        m = EarsMessage()
+        m.left_ear_col = c
+        m.left_antenna_col = c
+        m.right_ear_col = c
+        m.right_antenna_col = c
+        self._face_pub.publish(m)
+
+    def send_ir(self, c):
+        m = IRMessage()
+        m.cmd = c
+        self._ir_pub.publish(m)
 
 
 class ClareVoice(BaseState):

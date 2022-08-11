@@ -13,6 +13,10 @@ catkin_python_setup()
 add_message_files(
    FILES
    FaceMessage.msg
+   EarsMessage.msg
+   EvoMessage.msg
+   NoseMessage.msg
+   IRMessage.msg
 )
 
 generate_messages(

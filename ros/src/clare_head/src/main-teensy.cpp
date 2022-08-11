@@ -5,12 +5,21 @@
 #include <FastLED.h>
 #include <DHT.h>
 #include <IRremote.h>
+#include <Chrono.h>
+// So we can use a different serial port
+// needs to happen before ros.h include
+#define USE_TEENSY_HW_SERIAL
 #include <ros.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Empty.h>
 #include <std_msgs/Bool.h>
+#include <std_msgs/Float32.h>
+#include <std_msgs/UInt8.h>
 #include <std_msgs/Header.h>
+#include <sensor_msgs/Imu.h>
 #include <clare_head/FaceMessage.h>
+#include <clare_head/EarsMessage.h>
+#include <clare_head/DHT11Message.h>
 #include "clareevo.h"
 #include "clarempu.h"
 
@@ -30,13 +39,39 @@ CRGB ear_leds[NUM_EAR_LEDS];
 // Fwd declarations
 void face_callback(const clare_head::FaceMessage& face_msg);
 
+// ROS variables
+// Wrapper class so we can use a custom serial port
+class TeensyHardware1 : public ArduinoHardware {
+  public:
+  TeensyHardware1():ArduinoHardware(&Serial1, BAUD){};
+};
+
+ros::NodeHandle_<TeensyHardware1> nh;
 ros::NodeHandle nh;
-ros::Subscriber<clare_head::FaceMessage> face_sub("clare/head/face",
-face_callback);
+ros::Subscriber<clare_head::FaceMessage> face_sub("clare/head/face", face_callback);
+ros::Subscriber<clare_head::EarsMessage> ears_sub("clare/head/ears", ears_callback);
+ros::Subscriber<clare_head::IRMessage> ir_sub("clare/head/ir", ir_callback);
 
-// clare_head::FaceMessage face_msg;
+std_msgs::Bool noise_msg;
+clare_head::FaceMessage face_msg;
+clare_head::NoseMessage nose_msg;
+clare_head::EvoMessage evo_msg;
+sensor_msgs::Imu imu_msg;
+std_msgs::Float32 light_msg;
+std_msgs::UInt8 ir_msg;
+
+ros::Publisher noise_pub("clare/head/noise", &noise_msg);
+ros::Publisher nose_pub("clare/head/nose", &nose_msg);
+ros::Publisher evo_pub("clare/head/evo", &evo_msg);
+ros::Publisher imu_pub("clare/head/imu", &imu_msg);
+ros::Publisher light_pub("clare/head/light", &light_msg);
+
+Chrono lightChrono = Chrono();
+Chrono noseChrono = Chrono();
+Chrono evoChrono = Chrono();
+Chrono imuChrono = Chrono();
+
 Face face = Face(0, 2, 3, 1);
-
 ClareMpu mpu;
 ClareEvo evo;
 
@@ -50,6 +85,7 @@ void sound_int_handler(){
   if((cur_snd - last_snd) > debounce_snd_time){
     last_snd = millis();
     snd = 1;
+    noise_pub.publish(true);
   }
 }
 
@@ -113,10 +149,19 @@ float read_ldr(){
 }
 
 void set_ears(CRGB::HTMLColorCode c) {
-  for (int i = 0; i < NUM_EAR_LEDS; ++i) {
-    ear_leds[i] = c;
-    FastLED.show();
-  }
+  set_ears(c,c,c,c);
+}
+
+void set_ears(CRGB::HTMLColorCode earCol, CRGB::HTMLColorCode antCol) {
+  set_ears(earCol,antCol,earCol,antCol);
+}
+
+void set_ears(CRGB c1, CRGB c2, CRGB c3, CRGB c4) {
+  ear_leds[0] = c1;
+  ear_leds[1] = c2;
+  ear_leds[2] = c3;
+  ear_leds[3] = c4;
+  FastLED.show();
 }
 
 void smell_serial(float &hum, float &temp) {
@@ -153,6 +198,20 @@ void send_ir(){
 void face_callback(const clare_head::FaceMessage& face_msg){
   const char * expression  = face_msg.expression;
   face.setExpression(expression);
+}
+
+void ears_callback(const clare_head::EarsMessage& ears_msg){
+  CRGB le(ears_msg.left_ear_col);
+  CRGB la(ears_msg.left_antenna_col);
+  CRGB re(ears_msg.right_ear_col);
+  CRGB ra(ears_msg.right_antenna_col);
+  set_ears(le, la, re, ra);
+}
+
+void ir_callback(const clare_head::IRMessage& ir_msg) {
+  #TODO
+  unit8 cmd = ir_msg.cmd;
+  send_ir();
 }
 
 void loopEmotions(const int wait) {
@@ -236,8 +295,61 @@ void loop_test() {
 }
 
 void loop_ros() {
+  float w, x, y, z, ax, ay, az, x1, x2, x3, x4;
+  float temp;
+  float hum;
+  bool snd_heard;
+  float light;
+  int ctr = 0;
+
+  snd_heard = false;
+  if(snd > 0) {
+    snd_heard = 1;
+    snd = 0;
+  }
+
+  if(noseChrono.hasPassed(2000)){
+    noseChrono.reset();
+    smell_serial(hum, temp);
+    nose_msg.temp = temp;
+    nose_msg.humidity = hum;
+    nose_pub.publish(nose_msg);
+  }
+
+  if(evoChrono.hasPassed(500)){
+    evoChrono.reset();
+    evo.readState(x1, x2, x3, x4);
+    evo_msg.x1 = x1;
+    evo_msg.x2 = x2;
+    evo_msg.x3 = x3;
+    evo_msg.x4 = x4; 
+    evo_pub.publish(evo_msg);
+  }
+
+  if(lightChrono.hasPassed(5000)){
+    lightChrono.reset();
+    light = read_ldr();
+    light_pub(light);
+  }
+
+  if(imuChrono.hasPassed(250)){
+    imuChrono.reset();
+    mpu.readState(w, x, y, z, ax, ay, az);
+    imu_msg.header.stamp = millis();
+    imu_msg.header.seq = ctr;
+    imu_msg.orientation.x = x;
+    imu_msg.orientation.y = y;
+    imu_msg.orientation.z = z;
+    imu_msg.orientation.w = w;
+    imu_msg.linear_acceleration.x = ax;
+    imu_msg.linear_acceleration.y = ay;
+    imu_msg.linear_acceleration.z = az;
+    imu_pub.publish(imu_msg);
+  }
+
   nh.spinOnce();
-  delay(50);
+  delay(10);
+  ++ctr;
 }
 
 void loop(){

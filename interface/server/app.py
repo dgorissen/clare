@@ -4,7 +4,7 @@ import subprocess
 import json
 import time
 from flask_cors import CORS
-from clare.state import Tracks, ClareMiddle, HeadCamera, ClareVoice, RealsenseDepth, ClareTop
+from clare.state import Tracks, ClareMiddle, HeadCamera, ClareVoice, RealsenseDepth, ClareTop, ClareHead
 import rospy
 from functools import wraps
 import datetime
@@ -18,10 +18,11 @@ class ClareState:
     def __init__(self):
         self.tracks = None
         self.middle = None
-        self.head = None
+        self.camhead = None
         self.voice = None
         self.realsense = None
         self.top = None
+        self.head = None
 
 def is_connected(f):
     @wraps(f)
@@ -74,10 +75,11 @@ def init_state():
     cs = ClareState()
     cs.tracks = Tracks()
     cs.middle = ClareMiddle()
-    cs.head = HeadCamera()
+    cs.camhead = HeadCamera()
     cs.voice = ClareVoice()
     cs.realsense = RealsenseDepth()
     cs.top = ClareTop()
+    cs.head = ClareHead()
 
     STATE = cs
 
@@ -154,6 +156,11 @@ def middle_state():
 def top_state():
     return jsonify(STATE.top.get_state())
 
+@app.route("/head/state")
+@is_connected
+def top_state():
+    return jsonify(STATE.head.get_state())
+
 @app.route("/system/audio_devices")
 def audio_devices():
     return shell_cmd(["aplay", "-l"])
@@ -180,6 +187,8 @@ def get_stream(source):
         stream = make_stream("middle", STATE.middle.get_state)
     elif source == "top":
         stream = make_stream("top", STATE.top.get_state)
+    elif source == "head":
+        stream = make_stream("top", STATE.head.get_state)
     elif source == "voice":
         stream = make_stream("voice", STATE.voice.get_state)
     else:
@@ -201,7 +210,7 @@ def jpeg_stream(state_getter, field):
 @app.route("/head/facefeed")
 @is_connected
 def facefeed():
-	return Response(jpeg_stream(STATE.head.get_state, "image"),
+	return Response(jpeg_stream(STATE.camhead.get_state, "image"),
 		mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 @app.route("/body/depthfeed")
@@ -264,6 +273,17 @@ def read_env():
     STATE.top.set_lightring(p)
     return "", 200
 
+@app.route("/head/face/<expression>")
+@is_connected
+def set_face(expression):
+    STATE.head.set_expression(expression)
+    return "", 200
+
+@app.route("/head/ears/<col>")
+@is_connected
+def set_face(expression):
+    STATE.head.set_ears(col)
+    return "", 200
 
 if __name__ == "__main__":
     try:

@@ -1,0 +1,4 @@
+uint32 left_ear_col
+uint32 left_antenna_col
+uint32 right_ear_col
+uint32 right_antenna_col
