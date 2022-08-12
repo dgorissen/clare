@@ -99,15 +99,24 @@ void sound_int_handler(){
 void setup_ros(){
   nh.initNode();
   nh.subscribe(face_sub);
+  nh.subscribe(ears_sub);
+  nh.subscribe(ir_sub);
+  nh.advertise(noise_pub);
+  nh.advertise(nose_pub);
+  nh.advertise(light_pub);
+  nh.advertise(evo_pub);
+  nh.advertise(imu_pub);
+}
+
+void setup_test(){
+  // Other serial output
+  Serial1.begin(BAUD);
 }
 
 void setup() {
   // For logging
   Serial.begin(BAUD);
   
-  // ROS / Other serial output
-  Serial1.begin(BAUD);
-
   // For reading from the dht attached to the other microcontroller
   Serial4.begin(BAUD);
 
@@ -142,6 +151,7 @@ void setup() {
   IrSender.begin(IRT_PIN, ENABLE_LED_FEEDBACK);
 
   setup_ros();
+  //setup_test();
 }
 
 int read_sound() {
