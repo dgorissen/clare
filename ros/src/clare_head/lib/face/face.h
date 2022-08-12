@@ -65,7 +65,10 @@ class Face {
         void noExpression();
         void vampire();
 
+        void loopExpressions(const int wait);
+
         void setExpression(const char* ex);
+
 };
 
 #endif

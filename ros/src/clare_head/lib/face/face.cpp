@@ -1119,6 +1119,39 @@ void Face::vampire(){
 	vampireMouth();
 }
 
+void Face::loopExpressions(const int wait) {
+  this->happy();
+  delay(wait);
+  this->happyBlink();
+  delay(wait);
+  this->bigHappy();
+  delay(wait);
+  this->sad();
+  delay(wait);
+  this->silly();
+  delay(wait);
+  this->angry();
+  delay(wait);
+  this->confused();
+  delay(wait);
+  this->ugh();
+  delay(wait);
+  this->surprised();
+  delay(wait);
+  this->kiss();
+  delay(wait);
+  this->mmm();
+  delay(wait);
+  this->sceptical();
+  delay(wait);
+  this->ohDear();
+  delay(wait);
+  this->noExpression();
+  delay(wait);
+  this->vampire();
+  delay(wait);
+}
+
 void Face::setExpression(const char* ex){
 	if (strcmp(ex, "happy") == 0) {
 		this->happy();

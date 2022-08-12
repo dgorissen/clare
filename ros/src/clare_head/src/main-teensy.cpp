@@ -231,39 +231,6 @@ void ir_callback(const clare_head::IRMessage& ir_msg) {
   send_ir();
 }
 
-void loopEmotions(const int wait) {
-  face.happy();
-  delay(wait);
-  face.happyBlink();
-  delay(wait);
-  face.bigHappy();
-  delay(wait);
-  face.sad();
-  delay(wait);
-  face.silly();
-  delay(wait);
-  face.angry();
-  delay(wait);
-  face.confused();
-  delay(wait);
-  face.ugh();
-  delay(wait);
-  face.surprised();
-  delay(wait);
-  face.kiss();
-  delay(wait);
-  face.mmm();
-  delay(wait);
-  face.sceptical();
-  delay(wait);
-  face.ohDear();
-  delay(wait);
-  face.noExpression();
-  delay(wait);
-  face.vampire();
-  delay(wait);
-}
-
 float w, x, y, z, ax, ay, az, x1, x2, x3, x4;
 float temp;
 float hum;
@@ -275,7 +242,6 @@ void loop_test() {
   ++ctr;
   snd_heard = false;
 
-  // loopEmotions(500);
   if(ctr % 5) {
     face.bigHappy();
   } else {
