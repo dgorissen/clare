@@ -210,14 +210,22 @@ RUN wget https://storage.openvinotoolkit.org/repositories/openvino/packages/2021
   tar -xf ${vinofile}.tgz && \
   mv ${vinofile} openvino
 
-# TODO: cross compilation issues
 RUN cd openvino && \
   source bin/setupvars.sh && \
   mkdir build_samples && cd build_samples && \
   cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-march=armv7-a" ~/openvino/deployment_tools/inference_engine/samples/cpp && \
   make -j 2
 
-# cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++ -DCMAKE_CXX_FLAGS="-march=armv7-a" ~/openvino/deployment_tools/inference_engine/samples/cpp && \
+# TODO move earlier
+RUN git clone https://github.com/Koromix/tytools \
+  && mkdir -p tytools/build \
+  && cd tytools/build \
+  && cmake .. \
+  && make -j2
+
+USER root
+RUN cd tytools/build && make install
+USER dgorissen
 
 RUN echo -e '\n### \n\
 source ~/openvino/bin/setupvars.sh \n\
