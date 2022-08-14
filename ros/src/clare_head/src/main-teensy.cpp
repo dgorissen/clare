@@ -60,7 +60,7 @@ ros::Subscriber<clare_head::FaceMessage> face_sub("clare/head/face", face_callba
 ros::Subscriber<clare_head::EarsMessage> ears_sub("clare/head/ears", ears_callback);
 ros::Subscriber<clare_head::IRMessage> ir_sub("clare/head/ir", ir_callback);
 
-ros::ServiceServer<clare_head::ListExpressions::Request, clare_head::ListExpressions::Response> server("clare/head/get_face_expressions", &list_exp_callback);
+ros::ServiceServer<clare_head::ListExpressions::Request, clare_head::ListExpressions::Response> server("clare/head/list_face_expressions", &list_exp_callback);
 
 std_msgs::Bool noise_msg;
 clare_head::FaceMessage face_msg;
