@@ -1,3 +1,5 @@
+# Simple integration test app
+ 
 from flask import Flask, Response, render_template, session, request, jsonify, send_file
 from random import randint
 import subprocess
@@ -231,15 +233,20 @@ def get_stream(source):
     return Response(stream(), mimetype="text/event-stream")
 
 def jpeg_stream(state_getter, field):
-    last_ts = 0
+    last_ts = -1
     while True:
         # Get the current state
         tstate = state_getter()
-        img = tstate.get(field, None)
-        if img is None:
-            time.sleep(0.5)
+        cur_ts = tstate['ts']
+        if (last_ts != cur_ts):
+            img = tstate.get(field, None)
+            if img is None:
+                time.sleep(0.5)
+            else:
+                last_ts = cur_ts
+                yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(img) + b'\r\n')
         else:
-            yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(img) + b'\r\n')
+            time.sleep(0.5)
 
 @app.route("/head/facefeed")
 @is_connected
