@@ -170,11 +170,11 @@ float read_ldr(){
   return analog;
 }
 
-void set_ears(const CRGB c1, const CRGB c2, const CRGB c3, const CRGB c4) {
-  ear_leds[0] = c1;
-  ear_leds[1] = c2;
-  ear_leds[2] = c3;
-  ear_leds[3] = c4;
+void set_ears(const CRGB le, const CRGB la, const CRGB re, const CRGB ra) {
+  ear_leds[0] = re;
+  ear_leds[1] = ra;
+  ear_leds[2] = le;
+  ear_leds[3] = la;
   FastLED.show();
 }
 
