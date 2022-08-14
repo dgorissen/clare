@@ -231,9 +231,10 @@ void ears_callback(const clare_head::EarsMessage& ears_msg){
 }
 
 void ir_callback(const clare_head::IRMessage& ir_msg) {
-  // TODO
   uint8_t cmd = ir_msg.cmd;
-  send_ir();
+  uint16_t addr = ir_msg.address;
+  uint8_t repeat = ir_msg.repeat;
+  IrSender.sendNEC(addr, cmd, repeat);
 }
 
 void list_exp_callback(clare_head::ListExpressions::Request &req, clare_head::ListExpressions::Response &res){
