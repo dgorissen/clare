@@ -5,7 +5,7 @@ ClareEvo::ClareEvo(){
 
 }
 
-void ClareEvo::setupEvo(Stream* serial) {
+void ClareEvo::setupEvo(HardwareSerial* serial) {
     channel = serial;
 
     const byte PRINTOUT_BINARY[4]             = {0x00,0x11,0x02,0x4C};
@@ -42,11 +42,15 @@ uint8_t crc8(uint8_t *p, uint8_t len) {
   return crc & 0xFF;
 }
 
+void ClareEvo::clearBuffer(){
+  channel->clear();
+}
+
 void ClareEvo::readState(float &x1, float &x2, float &x3, float &x4) {
   const int BUFFER_LENGTH = 10;
   uint8_t Framereceived[BUFFER_LENGTH];// The variable "Framereceived[]" will contain the frame sent by the TeraRanger
   uint8_t indexx = 0;// The variable "indexx" will contain the number of actual bytes in the frame to treat in the main loop
-  
+
   while(true){
     if (channel->available() > 0) {
       // Send data only when you receive data

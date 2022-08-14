@@ -316,6 +316,9 @@ void loop_ros() {
     evo_msg.x3 = x3;
     evo_msg.x4 = x4; 
     evo_pub.publish(&evo_msg);
+
+    // To avoid stale data next time
+    evo.clearBuffer();
   }
 
   if(lightChrono.hasPassed(5000)){
