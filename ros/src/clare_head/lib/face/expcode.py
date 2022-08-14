@@ -49,6 +49,13 @@ def gen():
         exp = l.replace("void", "").replace("();", "").strip()
         if exp: exps.append(exp)
 
+    print()
+
+    exp_str = 'const char* exp = "' + (",".join(x.lower() for x in exps)) + '";'
+    print(exp_str)
+
+    print()
+
     code = f'void Face::setExpression(const char* ex){{\n' + \
     f'if (stricmp(ex, "{exps[0]}") == 0) {{\n' + \
     f'	this->{exps[0]}();\n'

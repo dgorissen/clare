@@ -11,18 +11,17 @@
 #define USE_TEENSY_HW_SERIAL
 #include <ros.h>
 #include <std_msgs/String.h>
-#include <std_msgs/Empty.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/Float32.h>
 #include <std_msgs/UInt8.h>
 #include <std_msgs/Header.h>
+#include <clare_head/ListExpressions.h>
 #include <sensor_msgs/Imu.h>
 #include <clare_head/FaceMessage.h>
 #include <clare_head/EarsMessage.h>
 #include <clare_head/NoseMessage.h>
 #include <clare_head/IRMessage.h>
 #include <clare_head/EvoMessage.h>
-#include <clare_head/ExpressionList.h>
 #include "clareevo.h"
 #include "clarempu.h"
 
@@ -53,14 +52,15 @@ class TeensyHardware1 : public ArduinoHardware {
 void face_callback(const clare_head::FaceMessage& face_msg);
 void ears_callback(const clare_head::EarsMessage& ears_msg);
 void ir_callback(const clare_head::IRMessage& ir_msg);
-void list_exp_callback(const Empty::Request & req, clare_head::ExpressionList & res);
+void list_exp_callback(clare_head::ListExpressions::Request &req,
+                       clare_head::ListExpressions::Response &res);
 
 ros::NodeHandle_<TeensyHardware1> nh;
 ros::Subscriber<clare_head::FaceMessage> face_sub("clare/head/face", face_callback);
 ros::Subscriber<clare_head::EarsMessage> ears_sub("clare/head/ears", ears_callback);
 ros::Subscriber<clare_head::IRMessage> ir_sub("clare/head/ir", ir_callback);
 
-ros::ServiceServer<Empty::Request, clare_head::ExpressionList> server("get_face_expressions",&list_exp_callback);
+ros::ServiceServer<clare_head::ListExpressions::Request, clare_head::ListExpressions::Response> server("clare/head/get_face_expressions", &list_exp_callback);
 
 std_msgs::Bool noise_msg;
 clare_head::FaceMessage face_msg;
@@ -69,7 +69,6 @@ clare_head::EvoMessage evo_msg;
 sensor_msgs::Imu imu_msg;
 std_msgs::Float32 light_msg;
 std_msgs::UInt8 ir_msg;
-clare_head::ExpressionList exp_msg;
 
 ros::Publisher noise_pub("clare/head/noise", &noise_msg);
 ros::Publisher nose_pub("clare/head/nose", &nose_msg);
@@ -237,9 +236,8 @@ void ir_callback(const clare_head::IRMessage& ir_msg) {
   send_ir();
 }
 
-void list_exp_callback(const Empty::Request & req, clare_head::ExpressionList & res){
-  String[] arr = Face.listExpressions();
-  //exp_msg
+void list_exp_callback(clare_head::ListExpressions::Request &req, clare_head::ListExpressions::Response &res){
+  res.expressions = Face::expressions;
 }
 
 float w, x, y, z, ax, ay, az, x1, x2, x3, x4;

@@ -21,15 +21,15 @@ add_message_files(
    ExpressionList.msg
 )
 
+add_service_files(
+  FILES
+  ListExpressions.srv
+)
+
 generate_messages(
   DEPENDENCIES
   std_msgs
   sensor_msgs
-)
-
-add_service_files(
-  FILES
-  ListExpressions.srv
 )
 
 catkin_package(

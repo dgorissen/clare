@@ -422,8 +422,8 @@ void Face::loopExpressions(const int wait) {
   delay(wait);
 }
 
-static void Face::listExpressions() {
-}
+
+const char * Face::expressions = "angry,angryeyes,bighappy,bigsmilemouth,blink,confused,crosseyes,happy,happyblink,kiss,kissmouth,lookdown,lookleft,lookright,lookup,mmm,mmmmouth,neutraleyes,neutralmouth,noexpression,ohdear,oucheyes,sad,sadeyes,sadmouth,sceptical,scepticaleyes,silly,sillymouth,sliteyes,smileeyes,smilemouth,surprisemouth,surprised,ugh,ughmouth,vampire,vampiremouth";
 
 void Face::setExpression(const char* ex){
   if (stricmp(ex, "angry") == 0) {

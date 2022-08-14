@@ -22,7 +22,10 @@ class Face {
         void setEyeExpression(const frameType expression[], const int size);
         void setMouth(const frameType, const frameType);
         void setMouthExpression(const frameType expression[], const int size);
+
     public:
+        static const char * expressions;
+
         Face(int le, int re, int lm, int rm);
         void reset();
         void blink();
@@ -68,7 +71,7 @@ class Face {
         void loopExpressions(const int wait);
         void setExpression(const char* ex);
 
-        static void listExpressions();
+        static const char** listExpressions();
 
 };
 
