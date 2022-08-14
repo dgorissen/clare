@@ -1,740 +1,10 @@
 #include "face.h"
 #include "utils.h"
+#include "facemasks.h"
+#include "Arduino.h"
 
 const int animTime = 50;
-binaryArrayType binaryArray[73] =		
-{		
-	{ // LeftNeutral1, 0	
-		B01111110,
-		B10000001,
-		B10000001,
-		B10011001,
-		B10011001,
-		B10000001,
-		B10000001,
-		B01111110
-	},	
-	{ // RightNeutral1, 1	
-		B01111110,
-		B10000001,
-		B10000001,
-		B10011001,
-		B10011001,
-		B10000001,
-		B10000001,
-		B01111110
-	},	
-	{ // LeftNeutral2, 2	
-		B00000000,
-		B00111100,
-		B01000010,
-		B01011010,
-		B01011010,
-		B01000010,
-		B00111100,
-		B00000000
-	},	
-	{ // RightNeutral2, 3	
-		B00000000,
-		B00111100,
-		B01000010,
-		B01011010,
-		B01011010,
-		B01000010,
-		B00111100,
-		B00000000
-	},	
-	{ // LeftNeutral3, 4	
-		B00000000,
-		B00111100,
-		B00100100,
-		B00110100,
-		B00110100,
-		B00100100,
-		B00111100,
-		B00000000
-	},	
-	{ // RightNeutral3, 5	
-		B00000000,
-		B00111100,
-		B00100100,
-		B00110100,
-		B00110100,
-		B00100100,
-		B00111100,
-		B00000000
-	},	
-	{ // LeftNeutral4, 6	
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00000000
-	},	
-	{ // RightNeutral4, 7	
-		B00000000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000
-	},	
-	{ // LeftAngry1, 8	
-		B01111110,
-		B10000001,
-		B10000001,
-		B10011001,
-		B10011001,
-		B10000001,
-		B10000010,
-		B01111100
-	},	
-	{ // RightAngry1, 9	
-		B01111100,
-		B10000010,
-		B10000001,
-		B10011001,
-		B10011001,
-		B10000001,
-		B10000001,
-		B01111110
-	},	
-	{ // LeftAngry2, 10	
-		B01111110,
-		B10000001,
-		B10000001,
-		B10011001,
-		B10011001,
-		B10000010,
-		B10000100,
-		B01111000
-	},	
-	{ // RightAngry2, 11	
-		B01111000,
-		B10000100,
-		B10000010,
-		B10011001,
-		B10011001,
-		B10000001,
-		B10000001,
-		B01111110
-	},	
-	{ // LeftAngry3, 12	
-		B01111110,
-		B11000001,
-		B10000001,
-		B10011001,
-		B10011010,
-		B10000100,
-		B10001000,
-		B01110000
-	},	
-	{ // RightAngry3, 13	
-		B01110000,
-		B10001000,
-		B10000100,
-		B10011010,
-		B10011001,
-		B10000001,
-		B11000001,
-		B01111110
-	},	
-	{ // LeftAngry4, 14	
-		B00111110,
-		B01000001,
-		B10000001,
-		B10011001,
-		B10011010,
-		B10000100,
-		B01001000,
-		B00110000
-	},	
-	{ // RightAngry4, 15	
-		B00110000,
-		B01001000,
-		B10000100,
-		B10011010,
-		B10011001,
-		B10000001,
-		B01000001,
-		B00111110
-	},	
-	{ // LeftRight1, 16	
-		B01111110,
-		B10000001,
-		B10000001,
-		B10000001,
-		B10011001,
-		B10011001,
-		B10000001,
-		B01111110
-	},	
-	{ // RightLeft1, 17	
-		B01111110,
-		B10000001,
-		B10011001,
-		B10011001,
-		B10000001,
-		B10000001,
-		B10000001,
-		B01111110
-	},	
-	{ // LeftRight2, 18	
-		B01111110,
-		B10000001,
-		B10000001,
-		B10000001,
-		B10000001,
-		B10011001,
-		B10011001,
-		B01111110
-	},	
-	{ // RightLeft2, 19	
-		B01111110,
-		B10011001,
-		B10011001,
-		B10000001,
-		B10000001,
-		B10000001,
-		B10000001,
-		B01111110
-	},	
-	{ // LeftRight3, 20	
-		B01111110,
-		B10000001,
-		B10000001,
-		B10000001,
-		B10000001,
-		B10000001,
-		B10011001,
-		B01111110
-	},	
-	{ // RightLeft3, 21	
-		B01111110,
-		B10011001,
-		B10000001,
-		B10000001,
-		B10000001,
-		B10000001,
-		B10000001,
-		B01111110
-	},	
-	{ // LeftRightSmall1, 22	
-		B00000000,
-		B00111100,
-		B01000010,
-		B01000010,
-		B01011010,
-		B01011010,
-		B00111100,
-		B00000000
-	},	
-	{ // RightLeftSmall1, 23	
-		B00000000,
-		B00111100,
-		B01011010,
-		B01011010,
-		B01000010,
-		B01000010,
-		B00111100,
-		B00000000
-	},	
-	{ // LeftRightSmall3, 24	
-		B00000000,
-		B00111100,
-		B00100100,
-		B00100100,
-		B00100100,
-		B00111100,
-		B00111100,
-		B00000000
-	},	
-	{ // RightLeftSmall3, 25	
-		B00000000,
-		B00111100,
-		B00111100,
-		B00100100,
-		B00100100,
-		B00100100,
-		B00111100,
-		B00000000
-	},	
-	{ // LeftUp1, 26	
-		B01111110,
-		B10000001,
-		B10000001,
-		B10001101,
-		B10001101,
-		B10000001,
-		B10000001,
-		B01111110
-	},	
-	{ // LeftUp2, 27	
-		B01111110,
-		B10000001,
-		B10000001,
-		B10000111,
-		B10000111,
-		B10000001,
-		B10000001,
-		B01111110
-	},	
-	{ // LeftUp3, 28	
-		B01111110,
-		B10000001,
-		B10000001,
-		B10000011,
-		B10000011,
-		B10000001,
-		B10000001,
-		B01111110
-	},	
-	{ // LeftDown1, 29	
-		B01111110,
-		B10000001,
-		B10000001,
-		B10110001,
-		B10110001,
-		B10000001,
-		B10000001,
-		B01111110
-	},	
-	{ // LeftDown2, 30	
-		B01111110,
-		B10000001,
-		B10000001,
-		B11100001,
-		B11100001,
-		B10000001,
-		B10000001,
-		B01111110
-	},	
-	{ // LeftDown3, 31	
-		B01111110,
-		B10000001,
-		B10000001,
-		B11000001,
-		B11000001,
-		B10000001,
-		B10000001,
-		B01111110
-	},	
-	{ // LeftSad3, 32	
-		B01110000,
-		B10001000,
-		B10000100,
-		B10011010,
-		B10011001,
-		B10000001,
-		B11000001,
-		B01111110
-	},	
-	{ // RightSad3, 33	
-		B01111110,
-		B11000001,
-		B10000001,
-		B10011001,
-		B10011010,
-		B10000100,
-		B10001000,
-		B01110000
-	},	
-	{ // LeftSad2, 34	
-		B01111000,
-		B10000100,
-		B10000010,
-		B10011001,
-		B10011001,
-		B10000001,
-		B10000001,
-		B01111110
-	},	
-	{ // RightSad2, 35	
-		B01111110,
-		B10000001,
-		B10000001,
-		B10011001,
-		B10011001,
-		B10000010,
-		B10000100,
-		B01111000
-	},	
-	{ // LeftSad1, 36	
-		B01111100,
-		B10000010,
-		B10000001,
-		B10011001,
-		B10011001,
-		B10000001,
-		B10000001,
-		B01111110
-	},	
-	{ // RightSad1, 37	
-		B01111110,
-		B10000001,
-		B10000001,
-		B10011001,
-		B10011001,
-		B10000001,
-		B10000010,
-		B01111100
-	},	
-	{ // LeftNeutral5, 38	
-		B00010000,
-		B00010000,
-		B00010000,
-		B00010000,
-		B00010000,
-		B00010000,
-		B00010000,
-		B00000000
-	},	
-	{ // RightNeutral5, 39	
-		B00000000,
-		B00010000,
-		B00010000,
-		B00010000,
-		B00010000,
-		B00010000,
-		B00010000,
-		B00010000
-	},	
-	{ // LeftAngry5, 40	
-		B00111110,
-		B01000001,
-		B10000001,
-		B10011001,
-		B10010010,
-		B10000100,
-		B01001000,
-		B00110000
-	},	
-	{ // RightAngry5, 41	
-		B00110000,
-		B01001000,
-		B10000100,
-		B10010010,
-		B10011001,
-		B10000001,
-		B01000001,
-		B00111110
-	},	
-	{ // LeftRightSmall2, 42	
-		B00000000,
-		B00111100,
-		B01000010,
-		B01000010,
-		B01000010,
-		B01011010,
-		B00111100,
-		B00000000
-	},	
-	{ // RightLeftSmall2, 43	
-		B00000000,
-		B00111100,
-		B01011010,
-		B01000010,
-		B01000010,
-		B01000010,
-		B00111100,
-		B00000000
-	},	
-	{ // LeftSad4, 44	
-		B00110000,
-		B01001000,
-		B10000100,
-		B10011010,
-		B10011001,
-		B10000001,
-		B01000001,
-		B00111110
-	},	
-	{ // RightSad4, 45	
-		B00111110,
-		B01000001,
-		B10000001,
-		B10011001,
-		B10011010,
-		B10000100,
-		B01001000,
-		B00110000
-	},	
-	{ // LeftSmile, 46	
-		B00000000,
-		B00001100,
-		B00110000,
-		B01100000,
-		B01100000,
-		B00110000,
-		B00001100,
-		B00000000
-	},	
-	{ // RightChevron, 47	
-		B00000000,
-		B00001000,
-		B00010100,
-		B00100010,
-		B01000001,
-		B00000000,
-		B00000000,
-		B00000000
-	},	
-	{ // LeftChevron, 48	
-		B00000000,
-		B00000000,
-		B00000000,
-		B01000001,
-		B00100010,
-		B00010100,
-		B00001000,
-		B00000000
-	},	
-	{ // LeftMouthBigSmile, 49	
-		B00000110,
-		B00000110,
-		B00001100,
-		B00001000,
-		B00011000,
-		B00110000,
-		B01100000,
-		B11000000
-	},	
-	{ // RightMouthBigSmile, 50	
-		B11000000,
-		B01100000,
-		B00110000,
-		B00011000,
-		B00001000,
-		B00001100,
-		B00000110,
-		B00000110
-	},	
-	{ // LeftMouthSad, 51	
-		B01100000,
-		B01100000,
-		B00110000,
-		B00010000,
-		B00011000,
-		B00001100,
-		B00000110,
-		B00000011
-	},	
-	{ // RightMouthSad, 52	
-		B00000011,
-		B00000110,
-		B00001100,
-		B00011000,
-		B00010000,
-		B00110000,
-		B01100000,
-		B01100000
-	},	
-	{ // LeftMouthSilly, 53	
-		B00011111,
-		B00011001,
-		B00011111,
-		B00011000,
-		B00011000,
-		B00110000,
-		B01100000,
-		B10000000
-	},	
-	{ // RightMouthSilly, 54	
-		B10000000,
-		B01100000,
-		B00110000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000
-	},	
-	{ // LeftMouthSquiggle, 55	
-		B00100000,
-		B00010000,
-		B00001000,
-		B00010000,
-		B00100000,
-		B00010000,
-		B00001000,
-		B00010000
-	},	
-	{ // RightMouthSquiggle, 56	
-		B00100000,
-		B00010000,
-		B00001000,
-		B00010000,
-		B00100000,
-		B00010000,
-		B00001000,
-		B00010000
-	},	
-	{ // LeftMouthO, 57	
-		B10000001,
-		B01000010,
-		B00100100,
-		B00011000,
-		B00000000,
-		B00000000,
-		B00000000,
-		B00000000
-	},	
-	{ // RightMouthO, 58	
-		B00000000,
-		B00000000,
-		B00000000,
-		B00000000,
-		B00011000,
-		B00100100,
-		B01000010,
-		B10000001
-	},	
-	{ // LeftMouthX, 59	
-		B00101000,
-		B01000100,
-		B00000000,
-		B00000000,
-		B00000000,
-		B00000000,
-		B00000000,
-		B00000000
-	},	
-	{ // RightMouthX, 60	
-		B00000000,
-		B00000000,
-		B00000000,
-		B00000000,
-		B00000000,
-		B01000100,
-		B00101000,
-		B00010000
-	},	
-	{ // LeftMouthSmile, 61	
-		B00000110,
-		B00000110,
-		B00000100,
-		B00000100,
-		B00001100,
-		B00001000,
-		B00011000,
-		B00110000
-	},	
-	{ // RightMouthSmile, 62	
-		B00110000,
-		B00011000,
-		B00001000,
-		B00001100,
-		B00000100,
-		B00000100,
-		B00000110,
-		B00000110
-	},	
-	{ // LeftMouthVamp, 63	
-		B00010000,
-		B00010000,
-		B00011000,
-		B00011100,
-		B00011110,
-		B00011100,
-		B00011000,
-		B00010000
-	},	
-	{ // RightMouthVamp, 64	
-		B00010000,
-		B00011000,
-		B00011100,
-		B00011110,
-		B00011100,
-		B00011000,
-		B00010000,
-		B00010000
-	},	
-	{ // LeftMouthSlash, 65	
-		B00011000,
-		B00011000,
-		B00010000,
-		B00110000,
-		B00110000,
-		B01100000,
-		B01100000,
-		B01000000
-	},	
-	{ // RightMouthSlash, 66	
-		B00000010,
-		B00000010,
-		B00000110,
-		B00000110,
-		B00000100,
-		B00001100,
-		B00001100,
-		B00001000
-	},	
-	{ // LeftEyeSceptical, 67	
-		B00000000,
-		B00000001,
-		B00000001,
-		B00011001,
-		B00011001,
-		B00000001,
-		B00000001,
-		B00000000
-	},	
-	{ // RightEyeSceptical, 68	
-		B00000000,
-		B00000100,
-		B00000100,
-		B00011100,
-		B00011100,
-		B00000100,
-		B00000100,
-		B00000000
-	},	
-	{ // LeftMouthNeutral, 69	
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00000000
-	},	
-	{ // RightMouthNeutral, 70	
-		B00000000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000
-	},	
-	{ // LeftEyeSlit, 71	
-		B00000000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00000000
-	},	
-	{ // RightEyeSlit, 72	
-		B00000000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00011000,
-		B00000000
-	}	
-};			
+
 
 Face::Face(int le, int re, int lm, int rm) {
 	fleftEyeIdx = le;
@@ -1153,25 +423,83 @@ void Face::loopExpressions(const int wait) {
 }
 
 void Face::setExpression(const char* ex){
-	if (strcmp(ex, "happy") == 0) {
-		this->happy();
-	} else if (strcmp(ex, "happyblink") == 0) {
-		this->happyBlink();
-	} else if (strcmp(ex, "sad") == 0) {
-		this->sad();
-	} else if (strcmp(ex, "angry") == 0) {
-		this->angry();
-	} else if (strcmp(ex, "silly") == 0) {
-		this->silly();
-	} else if (strcmp(ex, "surprised") == 0) {
-		this->surprised();
-	} else if (strcmp(ex, "ugh") == 0) {
-		this->ugh();
-	} else if (strcmp(ex, "confused") == 0) {
-		this->confused();
-	} else if (strcmp(ex, "kiss") == 0) {
-		this->kiss();
-	} else {
-		// Ignore
-	}
+  if (stricmp(ex, "angry") == 0) {
+          this->angry();
+  } else if (stricmp(ex, "angryEyes") == 0) {
+        this->angryEyes();
+  } else if (stricmp(ex, "bigHappy") == 0) {
+        this->bigHappy();
+  } else if (stricmp(ex, "bigSmileMouth") == 0) {
+        this->bigSmileMouth();
+  } else if (stricmp(ex, "blink") == 0) {
+        this->blink();
+  } else if (stricmp(ex, "confused") == 0) {
+        this->confused();
+  } else if (stricmp(ex, "crossEyes") == 0) {
+        this->crossEyes();
+  } else if (stricmp(ex, "happy") == 0) {
+        this->happy();
+  } else if (stricmp(ex, "happyBlink") == 0) {
+        this->happyBlink();
+  } else if (stricmp(ex, "kiss") == 0) {
+        this->kiss();
+  } else if (stricmp(ex, "kissMouth") == 0) {
+        this->kissMouth();
+  } else if (stricmp(ex, "lookDown") == 0) {
+        this->lookDown();
+  } else if (stricmp(ex, "lookLeft") == 0) {
+        this->lookLeft();
+  } else if (stricmp(ex, "lookRight") == 0) {
+        this->lookRight();
+  } else if (stricmp(ex, "lookUp") == 0) {
+        this->lookUp();
+  } else if (stricmp(ex, "mmm") == 0) {
+        this->mmm();
+  } else if (stricmp(ex, "mmmMouth") == 0) {
+        this->mmmMouth();
+  } else if (stricmp(ex, "neutralEyes") == 0) {
+        this->neutralEyes();
+  } else if (stricmp(ex, "neutralMouth") == 0) {
+        this->neutralMouth();
+  } else if (stricmp(ex, "noExpression") == 0) {
+        this->noExpression();
+  } else if (stricmp(ex, "ohDear") == 0) {
+        this->ohDear();
+  } else if (stricmp(ex, "ouchEyes") == 0) {
+        this->ouchEyes();
+  } else if (stricmp(ex, "sad") == 0) {
+        this->sad();
+  } else if (stricmp(ex, "sadEyes") == 0) {
+        this->sadEyes();
+  } else if (stricmp(ex, "sadMouth") == 0) {
+        this->sadMouth();
+  } else if (stricmp(ex, "sceptical") == 0) {
+        this->sceptical();
+  } else if (stricmp(ex, "scepticalEyes") == 0) {
+        this->scepticalEyes();
+  } else if (stricmp(ex, "silly") == 0) {
+        this->silly();
+  } else if (stricmp(ex, "sillyMouth") == 0) {
+        this->sillyMouth();
+  } else if (stricmp(ex, "slitEyes") == 0) {
+        this->slitEyes();
+  } else if (stricmp(ex, "smileEyes") == 0) {
+        this->smileEyes();
+  } else if (stricmp(ex, "smileMouth") == 0) {
+        this->smileMouth();
+  } else if (stricmp(ex, "surpriseMouth") == 0) {
+        this->surpriseMouth();
+  } else if (stricmp(ex, "surprised") == 0) {
+        this->surprised();
+  } else if (stricmp(ex, "ugh") == 0) {
+        this->ugh();
+  } else if (stricmp(ex, "ughMouth") == 0) {
+        this->ughMouth();
+  } else if (stricmp(ex, "vampire") == 0) {
+        this->vampire();
+  } else if (stricmp(ex, "vampireMouth") == 0) {
+        this->vampireMouth();
+  } else {
+      // ignore
+  }
 }
