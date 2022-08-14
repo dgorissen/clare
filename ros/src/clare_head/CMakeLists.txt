@@ -18,12 +18,18 @@ add_message_files(
    EvoMessage.msg
    NoseMessage.msg
    IRMessage.msg
+   ExpressionList.msg
 )
 
 generate_messages(
   DEPENDENCIES
   std_msgs
   sensor_msgs
+)
+
+add_service_files(
+  FILES
+  ListExpressions.srv
 )
 
 catkin_package(

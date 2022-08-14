@@ -422,6 +422,9 @@ void Face::loopExpressions(const int wait) {
   delay(wait);
 }
 
+static void Face::listExpressions() {
+}
+
 void Face::setExpression(const char* ex){
   if (stricmp(ex, "angry") == 0) {
           this->angry();

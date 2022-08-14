@@ -66,8 +66,9 @@ class Face {
         void vampire();
 
         void loopExpressions(const int wait);
-
         void setExpression(const char* ex);
+
+        static void listExpressions();
 
 };
 

@@ -22,6 +22,7 @@
 #include <clare_head/NoseMessage.h>
 #include <clare_head/IRMessage.h>
 #include <clare_head/EvoMessage.h>
+#include <clare_head/ExpressionList.h>
 #include "clareevo.h"
 #include "clarempu.h"
 
@@ -52,11 +53,14 @@ class TeensyHardware1 : public ArduinoHardware {
 void face_callback(const clare_head::FaceMessage& face_msg);
 void ears_callback(const clare_head::EarsMessage& ears_msg);
 void ir_callback(const clare_head::IRMessage& ir_msg);
+void list_exp_callback(const Empty::Request & req, clare_head::ExpressionList & res);
 
 ros::NodeHandle_<TeensyHardware1> nh;
 ros::Subscriber<clare_head::FaceMessage> face_sub("clare/head/face", face_callback);
 ros::Subscriber<clare_head::EarsMessage> ears_sub("clare/head/ears", ears_callback);
 ros::Subscriber<clare_head::IRMessage> ir_sub("clare/head/ir", ir_callback);
+
+ros::ServiceServer<Empty::Request, clare_head::ExpressionList> server("get_face_expressions",&list_exp_callback);
 
 std_msgs::Bool noise_msg;
 clare_head::FaceMessage face_msg;
@@ -65,6 +69,7 @@ clare_head::EvoMessage evo_msg;
 sensor_msgs::Imu imu_msg;
 std_msgs::Float32 light_msg;
 std_msgs::UInt8 ir_msg;
+clare_head::ExpressionList exp_msg;
 
 ros::Publisher noise_pub("clare/head/noise", &noise_msg);
 ros::Publisher nose_pub("clare/head/nose", &nose_msg);
@@ -106,6 +111,7 @@ void setup_ros(){
   nh.advertise(light_pub);
   nh.advertise(evo_pub);
   nh.advertise(imu_pub);
+  nh.advertiseService(server);
 }
 
 void setup_test(){
@@ -229,6 +235,11 @@ void ir_callback(const clare_head::IRMessage& ir_msg) {
   // TODO
   uint8_t cmd = ir_msg.cmd;
   send_ir();
+}
+
+void list_exp_callback(const Empty::Request & req, clare_head::ExpressionList & res){
+  String[] arr = Face.listExpressions();
+  //exp_msg
 }
 
 float w, x, y, z, ax, ay, az, x1, x2, x3, x4;
