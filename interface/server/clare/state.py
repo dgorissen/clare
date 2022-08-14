@@ -21,6 +21,7 @@ from vision_msgs.msg import Detection2DArray
 from speech_recognition_msgs.msg import SpeechRecognitionCandidates
 from sensor_msgs.msg import CompressedImage
 from clare_head.msg import NoseMessage, EvoMessage, FaceMessage, EarsMessage, IRMessage
+from clare_head.srv import ListExpressions
 from sensor_msgs.msg import Imu
 
 """
@@ -216,6 +217,12 @@ class ClareHead(BaseState):
         self._ears_pub = rospy.Publisher("/clare/head/ears", EarsMessage, queue_size=10)
         self._ir_pub = rospy.Publisher("/clare/head/ir", IRMessage, queue_size=10)
 
+        self.list_expressions_service = rospy.ServiceProxy('/clare/head/list_face_expressions', ListExpressions)
+
+    def get_expressions(self):
+        res = self.list_expressions_service().data.split(",");
+        return res
+
     def _noise_cb(self, msg):
         self._state["noise"] = msg.data
         self.update_ts_to_now()
@@ -253,9 +260,20 @@ class ClareHead(BaseState):
         m.right_antenna_col = c
         self._face_pub.publish(m)
 
-    def send_ir(self, c):
+    # Assumes hex strings
+    def set_ears(self, le, la, re, ra):
+        m = EarsMessage()
+        m.left_ear_col = int(le, base=0)
+        m.left_antenna_col = int(la, base=0)
+        m.right_ear_col = int(re, base=0)
+        m.right_antenna_col = int(ra, base=0)
+        self._face_pub.publish(m)
+
+    def send_ir(self, addr, cmd, repeat):
         m = IRMessage()
-        m.cmd = c
+        m.cmd = int(cmd, base=0)
+        m.address = int(addr, base=0)
+        m.repeat = repeat
         self._ir_pub.publish(m)
 
 

@@ -12,7 +12,7 @@ from clare.utils import shell_cmd
 import re
 import threading
 import RPi.GPIO as GPIO
-
+from random import randbytes
 
 class ClareState:
     def __init__(self):
@@ -160,6 +160,40 @@ def top_state():
 @is_connected
 def top_state():
     return jsonify(STATE.head.get_state())
+
+@app.route("/head/list_face_expressions")
+@is_connected
+def list_face_expressions():
+    return jsonify(STATE.head.get_expressions())
+
+@app.route("/head/set_ears")
+@is_connected
+def set_ears():
+
+    def rand_col_str():
+        return "0x" + str(randbytes(3).hex())
+
+    le = request.args.get('le', default=rand_col_str(), type=str)
+    la = request.args.get('la', default=rand_col_str(), type=str)
+    re = request.args.get('re', default=rand_col_str(), type=str)
+    ra = request.args.get('ra', default=rand_col_str(), type=str)
+
+    STATE.head.set_ears(le, la, re, ra)
+    return "", 200
+
+@app.route("/head/send_ir")
+@is_connected
+def set_ears():
+
+    def rand_hex():
+        return "0x" + str(randbytes(3).hex())
+
+    cmd = request.args.get('cmd', default=rand_hex(), type=str)
+    addr = request.args.get('cmd', default=rand_hex(), type=str)
+    repeat = request.args.get('cmd', default=5, type=int)
+
+    STATE.head.send_ir(addr, cmd, repeat))
+    return "", 200
 
 @app.route("/system/audio_devices")
 def audio_devices():
