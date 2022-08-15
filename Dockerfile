@@ -197,8 +197,8 @@ RUN cd /home/dgorissen/librealsense/build && make install
 USER dgorissen
 
 # Install model zoo downloader
-RUN git clone --depth 1 https://github.com/openvinotoolkit/open_model_zoo && \
-  cd open_model_zoo/tools/model_tools && \
+RUN git clone --depth 1 --branch 2021.4.2 https://github.com/openvinotoolkit/open_model_zoo && \
+  cd open_model_zoo/tools/downloader && \
   pip install -r requirements.in && \
   python3 downloader.py --output_dir /home/dgorissen/openvino_models --name face-detection-retail-0004
 
@@ -222,6 +222,9 @@ RUN git clone https://github.com/Koromix/tytools \
   && cd tytools/build \
   && cmake .. \
   && make -j2
+
+# Get some basic packages in place
+#RUN cd ~/clare/ros/src/clare_head && pio pkg install
 
 USER root
 RUN cd tytools/build && make install
