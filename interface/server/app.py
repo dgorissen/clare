@@ -236,8 +236,8 @@ def jpeg_stream(state_getter, field):
     while True:
         # Get the current state
         tstate = state_getter()
-        cur_ts = tstate['ts']
-        if (last_ts != cur_ts):
+        cur_ts = tstate.get('ts', -1)
+        if (cur_ts > 0) and (last_ts != cur_ts):
             img = tstate.get(field, None)
             if img is None:
                 time.sleep(0.5)
