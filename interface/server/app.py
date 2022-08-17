@@ -172,7 +172,7 @@ def randhex(n):
 def set_ears():
 
     def rand_col_str():
-        return "0x" + str(randhex())
+        return "0x" + str(randhex(3))
 
     le = request.args.get('le', default=rand_col_str(), type=str)
     la = request.args.get('la', default=rand_col_str(), type=str)
@@ -236,8 +236,8 @@ def jpeg_stream(state_getter, field):
     while True:
         # Get the current state
         tstate = state_getter()
-        cur_ts = tstate['ts']
-        if (last_ts != cur_ts):
+        cur_ts = tstate.get('ts', -1)
+        if (cur_ts > 0) and (last_ts != cur_ts):
             img = tstate.get(field, None)
             if img is None:
                 time.sleep(0.5)
