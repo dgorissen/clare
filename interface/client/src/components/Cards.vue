@@ -176,6 +176,32 @@
       </b-col>
 
     </b-row>
+    <b-row>
+      <b-col l="4">
+        <b-card
+            title="Head"
+            img-src="../assets/img/head.png"
+            img-alt="Image"
+            img-top
+            tag="article"
+            style="max-width: 20rem"
+            class="mb-2"
+          >
+          <b-card-text>Head actions</b-card-text>
+          <b-button
+            v-on:click="randEars()"
+            variant="primary"
+            >Randomise Ears</b-button
+          >
+          <p />
+          <div>
+              <b-form-select v-model="face_exp" :options="face_exps"></b-form-select>
+          </div>
+
+          <b-table stacked :items="[head_state]"></b-table>
+        </b-card>
+      </b-col>
+    </b-row>
   </b-container>
 </template>
 
@@ -191,7 +217,7 @@ var tracksStateStream = null;
 var middleStateStream = null;
 var topStateStream = null;
 var sttStream = null;
-//var headStateStream = null;
+var headStateStream = null;
 
 var joystick = null;
 
@@ -223,7 +249,7 @@ function closeEventSources() {
   if (middleStateStream != null) middleStateStream.close();
   if (topStateStream != null) topStateStream.close();
   if (sttStream != null) sttStream.close();
-  //if (headStateStream != null) headStateStream.close();
+  if (headStateStream != null) headStateStream.close();
 }
 
 export default {
@@ -257,6 +283,8 @@ export default {
       neck_y_angle: 50,
       lightring_val: "",
       lightring_vals: [],
+      face_exp: "",
+      face_exps: []
     };
   },
   watch: {
@@ -273,6 +301,16 @@ export default {
     lightring_val: function (val) {
       axios
         .get(api + "/body/lightring?pat=" + val)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    face_exp: function (val) {
+      axios
+        .get(api + "/head/face/" + val)
         .then((response) => {
           console.log(response);
         })
@@ -322,8 +360,9 @@ export default {
           that.controlTracks(x,y);
         });
 
-        // Initila lightrring value
+        // Initial values
         this.lightring_val = "off";
+        this.face_exp = "happy";
 
       } else {
         this.closeStreams();
@@ -425,6 +464,16 @@ export default {
           console.log(err);
         });
     },
+    randEars: function() {
+       axios
+        .get(api + "/head/set_ears")
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     connectToStreams: function(){
       tracksStateStream = new EventSource(api + "/tracks/stream");
       setupEventSource(tracksStateStream, "tracks", (data) => this.track_state = data);
@@ -443,8 +492,8 @@ export default {
         ta.scrollTop = ta.scrollHeight;
       });
 
-      // headStateStream = new EventSource(api + "/head/stream");
-      // setupEventSource(headStateStream, "head", (data) => this.head_state = data);
+      headStateStream = new EventSource(api + "/head/stream");
+      setupEventSource(headStateStream, "head", (data) => this.head_state = data);
     },
     closeStreams: function() {
       closeEventSources();
@@ -467,6 +516,16 @@ export default {
       .get(api + "/tracks/headlights")
       .then((response) => {
         this.headlights = response.data.value == "True" ? true : false;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    
+    axios
+      .get(api + "/head/list_face_expressions")
+      .then((response) => {
+        console.log(response);
+        this.face_exps = response;
       })
       .catch((err) => {
         console.log(err);
