@@ -525,7 +525,7 @@ export default {
       .get(api + "/head/list_face_expressions")
       .then((response) => {
         console.log(response);
-        this.face_exps = response;
+        this.face_exps = response.data;
       })
       .catch((err) => {
         console.log(err);
