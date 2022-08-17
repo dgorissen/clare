@@ -249,3 +249,6 @@ EXPOSE 11311
 ENTRYPOINT ["/home/dgorissen/clare/entrypoint.sh"]
 # https://stackoverflow.com/questions/53543881/docker-run-pass-arguments-to-entrypoint
 CMD [""]
+
+#TODO:
+# htop

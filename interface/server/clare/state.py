@@ -258,7 +258,7 @@ class ClareHead(BaseState):
         m.left_antenna_col = c
         m.right_ear_col = c
         m.right_antenna_col = c
-        self._face_pub.publish(m)
+        self._ears_pub.publish(m)
 
     # Assumes hex strings
     def set_ears(self, le, la, re, ra):
