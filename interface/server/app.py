@@ -270,6 +270,8 @@ def make_stream(msg_name, state_getter):
             if ts > 0 and ts != last_ts:
                 last_ts = ts
                 yield f"event: {msg_name}" + "\ndata: " + json.dumps(tstate) + "\n\n"
+                # No need for full throttle
+                time.sleep(0.5)
             else:
                 time.sleep(0.2)
 

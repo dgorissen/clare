@@ -141,11 +141,11 @@ class ClareTop(BaseState):
     def __init__(self):
         super(ClareTop, self).__init__()
 
-        self._arm_pub = rospy.Publisher("/clare/arms", ArmMovement, queue_size=10)
-        self._neck_pub = rospy.Publisher("/clare/neck", NeckMovement, queue_size=10)
-        self._fan_pub = rospy.Publisher("/clare/fan", FanControl, queue_size=10)
-        self._lightring_pub = rospy.Publisher("/clare/lightring", LightRingMessage, queue_size=10)
-        self._tts_pub = rospy.Publisher("/clare/tts", String, queue_size=10)
+        self._arm_pub = rospy.Publisher("/clare/arms", ArmMovement, queue_size=5)
+        self._neck_pub = rospy.Publisher("/clare/neck", NeckMovement, queue_size=5)
+        self._fan_pub = rospy.Publisher("/clare/fan", FanControl, queue_size=5)
+        self._lightring_pub = rospy.Publisher("/clare/lightring", LightRingMessage, queue_size=5)
+        self._tts_pub = rospy.Publisher("/clare/tts", String, queue_size=5)
         rospy.Subscriber("/clare/buttons", KeyValue, self.button_cb)
         rospy.Subscriber("/clare/env", BME680Message, self.env_cb)
         rospy.Subscriber("/clare/ir", String, self.ir_cb)
@@ -213,9 +213,9 @@ class ClareHead(BaseState):
         rospy.Subscriber("/clare/imu", Imu, self._imu_cb)
         rospy.Subscriber("/clare/light", Float32, self._light_cb)
 
-        self._face_pub = rospy.Publisher("/clare/head/face", FaceMessage, queue_size=10)
-        self._ears_pub = rospy.Publisher("/clare/head/ears", EarsMessage, queue_size=10)
-        self._ir_pub = rospy.Publisher("/clare/head/ir", IRMessage, queue_size=10)
+        self._face_pub = rospy.Publisher("/clare/head/face", FaceMessage, queue_size=5)
+        self._ears_pub = rospy.Publisher("/clare/head/ears", EarsMessage, queue_size=5)
+        self._ir_pub = rospy.Publisher("/clare/head/ir", IRMessage, queue_size=5)
 
         self.list_expressions_service = rospy.ServiceProxy('/clare/head/list_face_expressions', ListExpressions)
 
