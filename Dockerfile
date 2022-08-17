@@ -228,6 +228,7 @@ RUN git clone https://github.com/Koromix/tytools \
 
 USER root
 RUN cd tytools/build && make install
+RUN usermod -a -G plugdev dgorissen
 USER dgorissen
 
 RUN echo -e '\n### \n\
