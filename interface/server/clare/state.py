@@ -220,7 +220,7 @@ class ClareHead(BaseState):
         self.list_expressions_service = rospy.ServiceProxy('/clare/head/list_face_expressions', ListExpressions)
 
     def get_expressions(self):
-        res = self.list_expressions_service().data.split(",");
+        res = self.list_expressions_service().expressions.split(",");
         return res
 
     def _noise_cb(self, msg):

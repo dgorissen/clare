@@ -172,7 +172,7 @@ def randhex(n):
 def set_ears():
 
     def rand_col_str():
-        return "0x" + str(randhex())
+        return "0x" + str(randhex(3))
 
     le = request.args.get('le', default=rand_col_str(), type=str)
     la = request.args.get('la', default=rand_col_str(), type=str)
