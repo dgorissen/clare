@@ -267,7 +267,7 @@ class ClareHead(BaseState):
         m.left_antenna_col = int(la, base=0)
         m.right_ear_col = int(re, base=0)
         m.right_antenna_col = int(ra, base=0)
-        self._face_pub.publish(m)
+        self._ears_pub.publish(m)
 
     def send_ir(self, addr, cmd, repeat):
         m = IRMessage()
