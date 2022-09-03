@@ -57,21 +57,26 @@ if [[ "$run_mode" = "minimal" ]]; then
     # Keep container running
     echo "* Tailing rosout file ${ROSOUT_FILE}"
     tail -f ${ROSOUT_FILE}
+
+if [[ "$run_mode" = "ui" ]]; then
+    echo
+    echo "====== Running with web UI ======"
+    echo
+
+    # Start web backend
+    echo "* Starting web backend"
+    /home/dgorissen/.pyenv/shims/python3 $CLARE/interface/server/app.py 2>&1 | tee $LOGS/backend.txt &
+    echo $! > $LOGS/backend.pid
+    sleep 2
+
+    # Start web frontend
+    echo "* Starting web frontend"
+    #https://stackoverflow.com/questions/69665222/node-js-17-0-1-gatsby-error-digital-envelope-routinesunsupported-err-os
+    export NODE_OPTIONS=--openssl-legacy-provider
+    npm run serve --prefix $CLARE/interface/client > $LOGS/frontend.txt 2>&1 &
+    echo $! > $LOGS/frontend.pid
+    sleep 2
 fi
-
-# Start web backend
-echo "* Starting web backend"
-/home/dgorissen/.pyenv/shims/python3 $CLARE/interface/server/app.py 2>&1 | tee $LOGS/backend.txt &
-echo $! > $LOGS/backend.pid
-sleep 2
-
-# Start web frontend
-echo "* Starting web frontend"
-#https://stackoverflow.com/questions/69665222/node-js-17-0-1-gatsby-error-digital-envelope-routinesunsupported-err-os
-export NODE_OPTIONS=--openssl-legacy-provider
-npm run serve --prefix $CLARE/interface/client > $LOGS/frontend.txt 2>&1 &
-echo $! > $LOGS/frontend.pid
-sleep 2
 
 # Start ROS nodes
 echo "* Starting ROS nodes"
