@@ -231,6 +231,9 @@ RUN cd tytools/build && make install
 RUN usermod -a -G plugdev dgorissen
 USER dgorissen
 
+# TODO: move earlier
+RUN pip install transitions webcolors
+
 RUN echo -e '\n### \n\
 source ~/openvino/bin/setupvars.sh \n\
 source /opt/ros/noetic/setup.bash \n\
