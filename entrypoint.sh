@@ -57,6 +57,7 @@ if [[ "$run_mode" = "minimal" ]]; then
     # Keep container running
     echo "* Tailing rosout file ${ROSOUT_FILE}"
     tail -f ${ROSOUT_FILE}
+fi
 
 if [[ "$run_mode" = "ui" ]]; then
     echo
