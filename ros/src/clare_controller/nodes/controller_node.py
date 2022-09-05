@@ -24,25 +24,31 @@ from sensor_msgs.msg import Imu
 from transitions import Machine, State
 from enum import Enum, auto
 import webcolors
+import logging
 
 class States(Enum):
+    dummy = auto()
     idle = auto()
     surprised = auto()
     listening = auto()
     sad = auto()
     hooray = auto()
+    confused = auto()
 
 states = [
+    State(name=States.dummy),
     State(name=States.idle, on_enter='do_idle'),
     State(name=States.surprised, on_enter='do_surprised'),
     State(name=States.listening, on_enter='do_listening'),
-    State(name=States.hooray, on_enter='do_hooray')
+    State(name=States.hooray, on_enter='do_hooray'),
+    State(name=States.confused, on_enter='do_confused')
 ]
 
 transitions = [
     ['noise', States.idle, States.surprised],
     ['trigger_phrase', States.idle, States.listening],
     ['hooray', States.listening, States.hooray],
+    ['confused', States.listening, States.confused],
     ['to_idle', '*', States.idle]
 ]
 
@@ -57,7 +63,7 @@ class ClareController(object):
         self._face_pub = rospy.Publisher("/clare/head/face", FaceMessage, queue_size=5)
         self._ears_pub = rospy.Publisher("/clare/head/ears", EarsMessage, queue_size=5)
 
-        self.machine = Machine(model=self, states=States)
+        self.machine = Machine(model=self, states=States, transitions=transitions, initial=States.dummy)
 
     def start(self) -> None:
         rospy.Subscriber("/clare/head/noise", Bool, self._noise_cb)
@@ -68,33 +74,41 @@ class ClareController(object):
         self.reset_arms_service = rospy.ServiceProxy('/clare/arms/arms_to_neutral', ArmsToNeutral)
         self.list_expressions_service = rospy.ServiceProxy('/clare/head/list_face_expressions', ListExpressions)
 
-        self._exps = self.list_expressions_service().expressions.split(",");
+        #self._exps = self.list_expressions_service().expressions.split(",");
 
         # Give some time
         time.sleep(1)
     
         # Kick off state machine
-        self.machine.to_idle()
+        self.trigger("to_idle")
 
         while not rospy.is_shutdown():
             rospy.spin()
 
     def do_idle(self):
+        rospy.loginfo("Idle state")
         self.set_expression("happyblink")
         self.set_ears_from_cname("green")
+        self.set_lightring("green")
 
     def do_surprised(self):
+        rospy.loginfo("Surprised state")
         self.speak("What was that?")
         self.set_expression("surprised")
         self.set_ears_from_cname("orange")
+        self.set_lightring("orange")
+
         time.sleep(5)
-        self.trigger('to_idle')
+        self.trigger("to_idle")
 
     def do_listening(self):
+        rospy.loginfo("Listening state")
         self.set_expression("sceptical")
         self.set_ears_from_cname("blue")
+        self.set_lightring("blue")
 
     def do_hooray(self):
+        rospy.loginfo("Hooray state")
         self.set_expression("bighappy")
         self.set_ears_from_cname("green")
         self.speak("Hip hip hooray!")
@@ -102,34 +116,39 @@ class ClareController(object):
         self.trigger("to_idle")
 
     def _noise_cb(self, msg):
-        self.trigger('noise')
+        rospy.loginfo("Heard noise")
+        self.trigger("noise")
 
     def speech_cb(self, data):
-        txt = data.transcript[0]
+        txt = data.transcript[0].lower().strip()
+
+        rospy.loginfo("Speech callback, in state: " + str(self.state))
 
         if self.state == States.listening:
-            st_fun = self.text_to_state(txt.lower())
+            st_fun = self.text_to_state(txt)
             st_fun()
         elif self.state == States.idle:
-            if txt.strip() == 'hey clare':
-                self.trigger('tigger_phrase')
+            if txt in ['hey clare', 'hey claire']:
+                rospy.loginfo("Trigger phrase detected")
+                self.trigger("trigger_phrase")
             else:
-                self.speak("You must say hey clare first")
+                pass
         else:
             pass
 
     def do_confused(self):
-        self.speak("Im confused")
+        self.speak("I'm confused")
         self.set_expression("confused")
         self.set_ears_from_cname("red")
+        self.set_lightring("red")
         time.sleep(3)
-        self.to_idle
+        self.trigger("to_idle")
 
     def text_to_state(self, txt):
         if "hooray" in txt:
-            return self.to_hooray
+            return self.trigger("hooray")
         else:
-            self.do_confused()
+            self.trigger("confused")
 
     def _nose_cb(self, msg):
         t = msg.temp
@@ -142,10 +161,8 @@ class ClareController(object):
 
     def set_ears_from_cname(self, n):
         h = webcolors.name_to_hex(n).replace('#','0x')
-        self.set_ears(h)
-
-    def set_ears(self, cstr):
-        c = int(cstr, base=16);
+        c = int(h, base=16);
+        rospy.loginfo(f"{n}->{h}->{c}")
         self.set_ears(c,c,c,c)
 
     # Assumes hex strings
