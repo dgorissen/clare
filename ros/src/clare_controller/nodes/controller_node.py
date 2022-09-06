@@ -12,6 +12,7 @@ from clare_controller.clareapi import ClareAPI
 
 class States(Enum):
     dummy = auto()
+    init = auto()
     idle = auto()
     surprised = auto()
     listening = auto()
@@ -20,8 +21,10 @@ class States(Enum):
     confused = auto()
     farted = auto()
 
+
 states = [
     State(name=States.dummy),
+    State(name=States.init),
     State(name=States.idle),
     State(name=States.surprised),
     State(name=States.listening),
@@ -31,6 +34,8 @@ states = [
 ]
 
 transitions = [
+    ['initialise', States.dummy, States.init],
+    ['initialised', States.init, States.idle],
     ['noise', States.idle, States.surprised],
     ['trigger_phrase', States.idle, States.listening],
     ['hooray', States.listening, States.hooray],
@@ -43,18 +48,19 @@ class ClareController(ClareAPI):
 
     def __init__(self) -> None:
         super().__init__()
+        self._first_boot = True
         self.machine = Machine(model=self, states=States, transitions=transitions, initial=States.dummy)
 
     def start(self) -> None:
         # Kick off state machine
-        self.reset_arms()
-        self.trigger("to_idle")
+        self.trigger("initialise")
 
     def nose_handler(self, temp, hum):
         pass
     
     def button_handler(self):
-        self.speak("Hey, you touched my buttons!")
+        #self.speak("Hey, you touched my buttons!")
+        pass
 
     def noise_handler(self):
         rospy.loginfo("Heard noise")
@@ -73,11 +79,24 @@ class ClareController(ClareAPI):
         else:
             pass
 
+    def on_enter_init(self):
+        rospy.loginfo("Init state")
+        time.sleep(2)
+        self.speak("Hello, I am Clare. Please wait for me to setup")
+        self.set_expression("noexpression")
+        self.set_ears_from_cname("red")
+        self.reset_arms()
+        time.sleep(6)
+        self.trigger("to_idle")
+
     def on_enter_idle(self):
         rospy.loginfo("Idle state")
-        self.set_expression("happyblink")
         self.set_ears_from_cname("green")
         self.set_lightring("green")
+        self.set_expression("happyblink")
+        if self._first_boot:
+            self.speak("Setup complete")
+            self._first_boot = False
 
     def on_enter_surprised(self):
         rospy.loginfo("Surprised state")
@@ -132,7 +151,7 @@ class ClareController(ClareAPI):
     def text_to_state(self, txt):
         if "hooray" in txt:
             return "hooray"
-        elif txt in ["farted", "fart"]:
+        elif "farted" in txt or "fart" in txt:
             return "fartdefense"
         else:
             return "confused"
