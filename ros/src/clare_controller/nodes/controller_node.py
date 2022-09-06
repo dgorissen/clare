@@ -37,11 +37,11 @@ class States(Enum):
 
 states = [
     State(name=States.dummy),
-    State(name=States.idle, on_enter='do_idle'),
-    State(name=States.surprised, on_enter='do_surprised'),
-    State(name=States.listening, on_enter='do_listening'),
-    State(name=States.hooray, on_enter='do_hooray'),
-    State(name=States.confused, on_enter='do_confused')
+    State(name=States.idle),
+    State(name=States.surprised),
+    State(name=States.listening),
+    State(name=States.hooray),
+    State(name=States.confused)
 ]
 
 transitions = [
@@ -85,13 +85,13 @@ class ClareController(object):
         while not rospy.is_shutdown():
             rospy.spin()
 
-    def do_idle(self):
+    def on_enter_idle(self):
         rospy.loginfo("Idle state")
         self.set_expression("happyblink")
         self.set_ears_from_cname("green")
         self.set_lightring("green")
 
-    def do_surprised(self):
+    def on_enter_surprised(self):
         rospy.loginfo("Surprised state")
         self.speak("What was that?")
         self.set_expression("surprised")
@@ -101,13 +101,13 @@ class ClareController(object):
         time.sleep(5)
         self.trigger("to_idle")
 
-    def do_listening(self):
+    def on_enter_listening(self):
         rospy.loginfo("Listening state")
         self.set_expression("sceptical")
         self.set_ears_from_cname("blue")
         self.set_lightring("blue")
 
-    def do_hooray(self):
+    def on_enter_hooray(self):
         rospy.loginfo("Hooray state")
         self.set_expression("bighappy")
         self.set_ears_from_cname("green")
@@ -136,7 +136,7 @@ class ClareController(object):
         else:
             pass
 
-    def do_confused(self):
+    def on_enter_confused(self):
         self.speak("I'm confused")
         self.set_expression("confused")
         self.set_ears_from_cname("red")
@@ -161,9 +161,8 @@ class ClareController(object):
 
     def set_ears_from_cname(self, n):
         h = webcolors.name_to_hex(n).replace('#','0x')
-        c = int(h, base=16);
-        rospy.loginfo(f"{n}->{h}->{c}")
-        self.set_ears(c,c,c,c)
+        rospy.loginfo(f"{n}->{h}")
+        self.set_ears(h,h,h,h)
 
     # Assumes hex strings
     def set_ears(self, le, la, re, ra):
