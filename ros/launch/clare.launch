@@ -13,10 +13,6 @@
     
     -->
 
-    <!-- CONTROLLER ===================================================================== -->
-    <node name="clare_controller" pkg="clare_controller" type="controller_node.py">
-    </node>
-
     <!-- HEAD =========================================================================== -->
     <node name="clare_head" pkg="rosserial_python" type="serial_node.py">
         <param name="port" value="/dev/ttyUSB3"/>
@@ -70,6 +66,10 @@
     <node name="clare_tracks" pkg="rosserial_python" type="serial_node.py">
         <param name="port" value="/dev/ttyUSB0"/>
         <param name="baud" value="115200"/>
+    </node>
+
+    <!-- CONTROLLER ===================================================================== -->
+    <node name="clare_controller" pkg="clare_controller" type="controller_node.py">
     </node>
 
 </launch>
