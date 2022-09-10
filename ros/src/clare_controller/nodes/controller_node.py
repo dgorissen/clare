@@ -20,6 +20,7 @@ class States(Enum):
     hooray = auto()
     confused = auto()
     farted = auto()
+    insulted = auto()
 
 
 states = [
@@ -30,7 +31,8 @@ states = [
     State(name=States.listening),
     State(name=States.hooray),
     State(name=States.confused),
-    State(name=States.farted)
+    State(name=States.farted),
+    State(name=States.insulted)
 ]
 
 transitions = [
@@ -41,6 +43,7 @@ transitions = [
     ['hooray', States.listening, States.hooray],
     ['confused', States.listening, States.confused],
     ['fartdefense', States.listening, States.farted],
+    ['insult', States.listening, States.insulted],
     ['to_idle', '*', States.idle]
 ]
 
@@ -147,12 +150,34 @@ class ClareController(ClareAPI):
         time.sleep(3)
         self.trigger("to_idle")
 
+    def on_enter_insulted(self):
+        rospy.loginfo("Insulted state")
+        self.set_arms({"sh_fb_left":40, "sh_fb_right":40})
+        self.set_expression("angry")
+        self.set_lightring("orange")
+        self.set_ears_from_cname("orange")
+        self.speak("Well, they are just player hating.")
+        time.sleep(1)
+        self.speak("I will pinch them in their bottoms.")
+        self.set_arms({"gr_left":50, "gr_right":50})
+        self.set_arms({"wr_left":50, "wr_right":50})
+        self.reset_arms()
+        time.sleep(4)
+        self.speak("And I will suck their blood.")
+        self.set_expression("vampire")
+        self.set_ears_from_cname("red")
+        self.set_lightring("red")
+        time.sleep(3)
+        self.trigger("to_idle")
+
     # TODO - figure out proper model
     def text_to_state(self, txt):
         if "hooray" in txt:
             return "hooray"
         elif "farted" in txt or "fart" in txt:
             return "fartdefense"
+        elif "work" in txt:
+            return "insulted"
         else:
             return "confused"
 
