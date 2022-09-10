@@ -6,6 +6,7 @@ from clare_lightring.msg import LightRingMessage
 from threading import Thread
 import board
 import neopixel_spi as neopixel
+import webcolors
 
 PIXEL_ORDER = neopixel.GRB
 
@@ -68,17 +69,8 @@ class LightringController(object):
         self._pixels.fill((0, 0, 0))
 
     def fill_solid(self, val):
-        if val == "red":
-            self._pixels.fill((255, 0, 0))
-            self._pixels.show()
-        if val == "green":
-            self._pixels.fill((0, 255, 0))
-            self._pixels.show()
-        if val == "blue":
-            self._pixels.fill((0, 0, 255))
-            self._pixels.show()
-        else:
-            rospy.logwarn(f"Invalid lightring value {val}")
+        r,g,b = webcolors.name_to_rgb(val)
+        self._pixels.fill((r,g,b))
 
     def run(self):
         rospy.logdebug('Lightring node ready and listening')
