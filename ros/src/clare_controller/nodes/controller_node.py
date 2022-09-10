@@ -177,7 +177,7 @@ class ClareController(ClareAPI):
         elif "farted" in txt or "fart" in txt:
             return "fartdefense"
         elif "work" in txt:
-            return "insulted"
+            return "insult"
         else:
             return "confused"
 
