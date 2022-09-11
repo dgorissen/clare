@@ -67,10 +67,13 @@ class LightringController(object):
 
     def turn_off(self):
         self._pixels.fill((0, 0, 0))
+        self._pixels.show()
 
     def fill_solid(self, val):
         r,g,b = webcolors.name_to_rgb(val)
+        rospy.logerr(f"Lightring set from {val} to {r},{g},{b}")
         self._pixels.fill((r,g,b))
+        self._pixels.show()
 
     def run(self):
         rospy.logdebug('Lightring node ready and listening')
