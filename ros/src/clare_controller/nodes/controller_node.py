@@ -160,15 +160,16 @@ class ClareController(ClareAPI):
         time.sleep(1)
         self.speak("I will pinch them in their bottoms.")
         self.set_arms({"gr_left":50, "gr_right":50, "wr_left":50, "wr_right":50})
-        time.sleep(5)
+        time.sleep(6)
         self.speak("Until I hear them beg for mercy.")
         self.set_arms({"gr_left":100, "gr_right":100, "wr_left":0, "wr_right":0})
         self.set_arms({"sh_fb_left":10, "sh_fb_right":10})
+        time.sleep(2)
         self.speak("And I will suck their blood.")
         self.set_expression("vampire")
         self.set_ears_from_cname("red")
         self.set_lightring("red")
-        time.sleep(6)
+        time.sleep(7)
         self.trigger("to_idle")
 
     # TODO - figure out proper model
