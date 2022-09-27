@@ -152,8 +152,8 @@ if __name__ == "__main__":
     parallel_requests = rospy.get_param("~parallel_requests")
 
     # Publishers
-    image_pub = rospy.Publisher("clare/head/images", Image, queue_size=10)
-    face_pub = rospy.Publisher("clare/head/faces", Detection2DArray, queue_size=10)
+    image_pub = rospy.Publisher("clare/head/images", Image, queue_size=5)
+    face_pub = rospy.Publisher("clare/head/faces", Detection2DArray, queue_size=5)
 
     try:
         run_face_detection(model_dir, model_name, threshold, parallel_requests, image_pub, face_pub)

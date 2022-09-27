@@ -8,7 +8,8 @@ from transitions import Machine, State
 from enum import Enum, auto
 import logging
 from clare_controller.clareapi import ClareAPI
-
+from threading import Timer
+import random
 
 class States(Enum):
     dummy = auto()
@@ -53,6 +54,7 @@ class ClareController(ClareAPI):
         super().__init__()
         self._first_boot = True
         self.machine = Machine(model=self, states=States, transitions=transitions, initial=States.dummy)
+        self._idle_timer = None
 
     def start(self) -> None:
         # Kick off state machine
@@ -89,6 +91,7 @@ class ClareController(ClareAPI):
         self.set_expression("noexpression")
         self.set_ears_from_cname("red")
         self.reset_arms()
+        self.reset_neck()
         time.sleep(6)
         self.trigger("to_idle")
 
@@ -100,6 +103,28 @@ class ClareController(ClareAPI):
         if self._first_boot:
             self.speak("Setup complete")
             self._first_boot = False
+
+        self._idle_timer = RepeatTimer(4, self._idle_animation)
+        self._idle_timer.start()
+        
+    def on_exit_idle(self):
+        if self._idle_timer:
+            self._idle_timer.cancel()
+            self._idle_timer = None
+
+        self.reset_neck()
+
+    def _idle_animation(self):
+        if self.state != States.idle:
+            return
+
+        self.set_expression("happyblink")
+        self.set_lightring("rainbow")
+        
+        z = random.randint(25, 75)
+        y = random.randint(25, 75)
+
+        self.set_neck(z, y)
 
     def on_enter_surprised(self):
         rospy.loginfo("Surprised state")
@@ -182,6 +207,12 @@ class ClareController(ClareAPI):
             return "insult"
         else:
             return "confused"
+
+class RepeatTimer(Timer):
+    def run(self):
+        while not self.finished.wait(self.interval):
+            self.function(*self.args, **self.kwargs)
+
 
 if __name__ == '__main__':
     rospy.init_node('clare_controller', anonymous=False)
