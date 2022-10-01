@@ -5,6 +5,7 @@ from adafruit_servokit import ServoKit
 import time
 import numpy as np
 import math
+import concurrent.futures
 
 def make_interpolater(left_min, left_max, right_min, right_max): 
     # Figure out how 'wide' each range is  
@@ -101,6 +102,25 @@ class ServoController(object):
                 joint.current_pos = v
         else:
             rospy.logerr(f"Out of range servo angle commanded: {key}:{v}")
+
+    # Set multipe servos in parallel
+    def set_servo_group(self, pos_map, flips, logical):
+        futures = {}
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+            for key, value in pos_map.items():
+                flip = flips.get(key, False)
+
+                if logical:
+                    future = executor.submit(self.set_servo_logical, key, value, flip)
+                else:
+                    future = executor.submit(self.set_servo, key, value, flip)
+                
+                futures[future] = key
+
+            for fut in concurrent.futures.as_completed(futures):
+                key = futures[fut]
+                rospy.info(f"Joint {key}, position reached")
 
     # Takes values in 0-100, negative indicates None / ignore
     def set_servo_logical(self, key, value, flip=False):

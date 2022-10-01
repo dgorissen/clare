@@ -72,6 +72,38 @@ class ArmsController(ServoController):
 
         # Shoulders
         # Make servo's rotate in the same direction (mirror image mount)
+        self.set_servo_group({"sh_fb_left": msg.sh_fb_left, "sh_fb_right": msg.sh_fb_right},
+                             {"sh_fb_left": True},
+                             True)
+
+
+        self.set_servo_group({"sh_ud_left": msg.sh_ud_left, "sh_ud_right": msg.sh_ud_right},
+                             {"sh_ud_left": True},
+                             True)
+
+        # Elbows
+        self.set_servo_group({"el_left": msg.el_left, "el_right": msg.el_right},
+                             {},
+                             True)
+
+        # Wrist
+        self.set_servo_group({"wr_left": msg.wr_left, "wr_right": msg.wr_right},
+                             {},
+                             True)
+
+        # Gripper
+        self.set_servo_group({"gr_left": msg.gr_left, "gr_right": msg.gr_right},
+                             {},
+                             True)
+
+        # Publish latest positions
+        self._publish_arm_state()
+        
+    def _arm_callback_synchronous(self, msg):
+        # Set the servos directly, takes logical values
+
+        # Shoulders
+        # Make servo's rotate in the same direction (mirror image mount)
         self.set_servo_logical("sh_fb_left", msg.sh_fb_left, flip=True)
         self.set_servo_logical("sh_fb_right", msg.sh_fb_right)
 
