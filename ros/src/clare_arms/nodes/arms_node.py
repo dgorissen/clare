@@ -98,32 +98,7 @@ class ArmsController(ServoController):
 
         # Publish latest positions
         self._publish_arm_state()
-        
-    def _arm_callback_synchronous(self, msg):
-        # Set the servos directly, takes logical values
 
-        # Shoulders
-        # Make servo's rotate in the same direction (mirror image mount)
-        self.set_servo_logical("sh_fb_left", msg.sh_fb_left, flip=True)
-        self.set_servo_logical("sh_fb_right", msg.sh_fb_right)
-
-        self.set_servo_logical("sh_ud_left", msg.sh_ud_left, flip=True)
-        self.set_servo_logical("sh_ud_right", msg.sh_ud_right)
-
-        # Elbows
-        self.set_servo_logical("el_left", msg.el_left)
-        self.set_servo_logical("el_right", msg.el_right)
-
-        # Wrist
-        self.set_servo_logical("wr_left", msg.wr_left)
-        self.set_servo_logical("wr_right", msg.wr_right)
-
-        # Gripper
-        self.set_servo_logical("gr_left", msg.gr_left)
-        self.set_servo_logical("gr_right", msg.gr_right)
-
-        # Publish latest positions
-        self._publish_arm_state()
     
     def run(self):
         rospy.logdebug('Arms node ready and listening')

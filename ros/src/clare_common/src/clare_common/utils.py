@@ -109,6 +109,9 @@ class ServoController(object):
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
             for key, value in pos_map.items():
+                if value < 0:
+                    continue
+
                 flip = flips.get(key, False)
 
                 if logical:
@@ -120,7 +123,7 @@ class ServoController(object):
 
             for fut in concurrent.futures.as_completed(futures):
                 key = futures[fut]
-                rospy.info(f"Joint {key}, position reached")
+                rospy.logdebug(f"Joint {key}, position reached")
 
     # Takes values in 0-100, negative indicates None / ignore
     def set_servo_logical(self, key, value, flip=False):

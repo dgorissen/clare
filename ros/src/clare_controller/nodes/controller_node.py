@@ -22,6 +22,7 @@ class States(Enum):
     confused = auto()
     farted = auto()
     insulted = auto()
+    love = auto()
 
 
 states = [
@@ -33,7 +34,8 @@ states = [
     State(name=States.hooray),
     State(name=States.confused),
     State(name=States.farted),
-    State(name=States.insulted)
+    State(name=States.insulted),
+    State(name=States.love)
 ]
 
 transitions = [
@@ -45,6 +47,7 @@ transitions = [
     ['confused', States.listening, States.confused],
     ['fartdefense', States.listening, States.farted],
     ['insult', States.listening, States.insulted],
+    ['inlove', States.listening, States.love],
     ['to_idle', '*', States.idle]
 ]
 
@@ -104,7 +107,7 @@ class ClareController(ClareAPI):
             self.speak("Setup complete")
             self._first_boot = False
 
-        self._idle_timer = RepeatTimer(4, self._idle_animation)
+        self._idle_timer = RepeatTimer(7, self._idle_animation)
         self._idle_timer.start()
         
     def on_exit_idle(self):
@@ -197,6 +200,22 @@ class ClareController(ClareAPI):
         time.sleep(7)
         self.trigger("to_idle")
 
+    def on_enter_love(self):
+        rospy.loginfo("Love state")
+        self.set_arms({"sh_fb_left":50, "sh_fb_right":50})
+        self.set_expression("kiss")
+        self.set_lightring("crimson")
+        self.set_ears_from_cname("crimson")
+        self.speak("Oooooh, yes I like her very much.")
+        time.sleep(2)
+        self.speak("I would pinch her in her bottom.")
+        self.set_arms({"gr_left":50, "gr_right":50, "wr_left":50, "wr_right":50})
+        time.sleep(3)
+        self.set_arms({"gr_left":100, "gr_right":100, "wr_left":0, "wr_right":0})
+        self.set_arms({"sh_fb_left":10, "sh_fb_right":10})
+        time.sleep(3)
+        self.trigger("to_idle")
+
     # TODO - figure out proper model
     def text_to_state(self, txt):
         if "hooray" in txt:
@@ -205,6 +224,8 @@ class ClareController(ClareAPI):
             return "fartdefense"
         elif "work" in txt:
             return "insult"
+        elif "like" in txt:
+            return "inlove"
         else:
             return "confused"
 
