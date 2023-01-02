@@ -61,6 +61,10 @@
         <env name="ALSA_CARD" value="1"/>
         <param name="backend" value="gtts"/>
     </node>
+    <node name="clare_imgview" pkg="clare_imgview" type="imgview_node.py">
+        <param name="root" value="~/clare/ros/src/clare_imgview/img"/>
+        <param name="display" value=":0.0"/>
+    </node>
 
     <!-- TRACKS =========================================================================== -->
     <node name="clare_tracks" pkg="rosserial_python" type="serial_node.py">
