@@ -76,8 +76,10 @@ class ClareController(ClareAPI):
         pass
 
     def noise_handler(self):
-        rospy.loginfo("Heard noise")
-        self.trigger("noise")
+        if self.state == States.idle:
+            # dont interrupt other states
+            rospy.loginfo("Heard noise")
+            self.trigger("noise")
 
     def speech_handler(self, txt):
         if self.state == States.listening:
