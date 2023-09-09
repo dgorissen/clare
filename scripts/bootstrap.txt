@@ -6,6 +6,8 @@ In raspi-config enable:
   serial, i2c, camera, vnc, spi
   opengl: "7. Advanced Options" – "A8 GL Driver" – "G2 GL (Fake KMS)"
   set hostname to clare
+  turn off screen blanking in the Display settings
+  set deault user to login to gui to dgorissen (https://raspberrypi.stackexchange.com/questions/12538/boot-into-the-gui-after-changing-default-user)
 
 ensure /etc/hosts also resolves clare correctly
 
