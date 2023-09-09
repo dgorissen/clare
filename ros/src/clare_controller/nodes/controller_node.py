@@ -8,6 +8,7 @@ from transitions import Machine, State
 from enum import Enum, auto
 import logging
 from clare_controller.clareapi import ClareAPI
+from clare_controller.gptclient import GPTClient
 from threading import Timer
 import random
 
@@ -23,6 +24,7 @@ class States(Enum):
     farted = auto()
     insulted = auto()
     love = auto()
+    gpt = auto()
 
 
 states = [
@@ -35,7 +37,8 @@ states = [
     State(name=States.confused),
     State(name=States.farted),
     State(name=States.insulted),
-    State(name=States.love)
+    State(name=States.love),
+    State(name=States.gpt)
 ]
 
 transitions = [
@@ -48,6 +51,7 @@ transitions = [
     ['fartdefense', States.listening, States.farted],
     ['insult', States.listening, States.insulted],
     ['inlove', States.listening, States.love],
+    ['chatgpt', States.listening, States.gpt],
     ['to_idle', '*', States.idle]
 ]
 
@@ -58,6 +62,7 @@ class ClareController(ClareAPI):
         self._first_boot = True
         self.machine = Machine(model=self, states=States, transitions=transitions, initial=States.dummy)
         self._idle_timer = None
+        self._gptclient = GPTClient()
 
     def start(self) -> None:
         # Kick off state machine
@@ -77,7 +82,11 @@ class ClareController(ClareAPI):
     def speech_handler(self, txt):
         if self.state == States.listening:
             s = self.text_to_state(txt)
-            self.trigger(s)
+            if s:
+                self.trigger(s)
+            else:
+                #self.trigger("confused")
+                self.trigger("chatgpt", txt=txt)
         elif self.state == States.idle:
             if txt in ['hey clare', 'hey claire']:
                 rospy.loginfo("Trigger phrase detected")
@@ -128,6 +137,15 @@ class ClareController(ClareAPI):
         y = random.randint(25, 75)
 
         self.set_neck(z, y)
+
+    def on_enter_gpt(self, txt=""):
+        rospy.loginfo("GPT state")
+        r = self._gptclient.ask_gpt(txt)
+        self.set_expression(r.expression)
+        self.set_ears(r.colour1,r.colour1,r.colour2,r.colour2)
+        self.speak(r.response)
+        time.sleep(3)
+        self.trigger("to_idle")
 
     def on_enter_surprised(self):
         rospy.loginfo("Surprised state")
@@ -216,7 +234,7 @@ class ClareController(ClareAPI):
         time.sleep(3)
         self.trigger("to_idle")
 
-    # TODO - figure out proper model
+    # TODO - some simple pre-canned actions, figure out proper model
     def text_to_state(self, txt):
         if "hooray" in txt:
             return "hooray"
@@ -227,7 +245,7 @@ class ClareController(ClareAPI):
         elif "like" in txt:
             return "inlove"
         else:
-            return "confused"
+            return None
 
 class RepeatTimer(Timer):
     def run(self):
