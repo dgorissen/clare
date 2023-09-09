@@ -143,8 +143,9 @@ class ClareController(ClareAPI):
     def on_enter_gpt(self, txt=""):
         rospy.loginfo("GPT state")
         r = self._gptclient.ask_gpt(txt)
-        self.set_expression(r.expression)
-        self.set_ears(r.colour1,r.colour1,r.colour2,r.colour2)
+        rospy.loginfo(str(r))
+        self.set_expression(r["expression"])
+        self.set_ears(r["colour1"],r["colour1"],r["colour2"],r["colour2"])
         self.speak(r.response)
         time.sleep(3)
         self.trigger("to_idle")
