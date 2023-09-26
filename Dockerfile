@@ -1,5 +1,4 @@
-FROM ros:noetic@sha256:dc89df4c67ffb8e35dcb232a71956399e39b3575cfa1e8389e74e1d5a0782638
-
+FROM ros:noetic@sha256:ed655ce2187b5915ce130f9ff76436bfe8e526576d42ff1c4dbe1cf6fe400251
 SHELL ["/bin/bash", "-c"]
 
 # Ros packages
@@ -89,7 +88,7 @@ WORKDIR /home/dgorissen
 RUN rosdep update
 
 # Set-up necessary Env vars for PyEnv
-ENV PYTHON_VERSION 3.7.12
+ENV PYTHON_VERSION 3.7.16
 ENV PYENV_ROOT /home/dgorissen/.pyenv
 ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 
@@ -134,20 +133,28 @@ USER dgorissen
 RUN READTHEDOCS=True pip install picamera
 RUN pip install \
   imutils flask flask_cors pyyaml rospkg pyserial platformio \
-  netifaces pyopengl pyopengl_accelerate empy \
-  pyusb click pyaudio pydub rpi.gpio \
-  pocketsphinx webrtcvad respeaker hidapi speechrecognition \ 
+  netifaces empy rpi.gpio
+
+#RUN pip install --upgrade setuptools
+# hidapi is not compatible with cython 0.3 and above (yet)
+RUN pip install cython==0.29.26
+RUN pip install hidapi
+RUN pip install \
+  pyusb click pyaudio pydub \
+  webrtcvad respeaker hidapi speechrecognition \ 
   requests-oauthlib lxml catkin-tools
+
+RUN pip install pyopengl pyopengl_accelerate
+
+#TODO Fails because its ninja dependency no longer properly builds
+#RUN pip install pocketsphinx
 
 RUN pip install adafruit-extended-bus adafruit-circuitpython-bme680 \
     adafruit-circuitpython-pca9685 adafruit-circuitpython-servokit \
     rpi_ws281x adafruit-circuitpython-neopixel adafruit-blinka evdev \
     adafruit-circuitpython-neopixel-spi
 
-RUN pip install gobject PyGObject playsound gtts defusedxml
-
-# TODO takes forever, does not complete..
-# RUN pip install scikit-learn
+RUN pip install gobject PyGObject playsound gtts defusedxml transitions webcolors openai
 
 # Insteall respeaker repos
 RUN git clone https://github.com/respeaker/usb_4_mic_array.git && \
@@ -165,7 +172,7 @@ RUN mkdir -p ~/catkin_ws/src && cd ~/catkin_ws/src && \
   git clone https://github.com/jsk-ros-pkg/jsk_3rdparty.git && \
   source /opt/ros/noetic/setup.bash && \
   cd ~/catkin_ws && \
-  catkin config --init && \
+  catkin config --init  --cmake-args -DSETUPTOOLS_DEB_LAYOUT=OFF && \
   catkin build respeaker_ros && \
   make -C build/respeaker_ros install
 
@@ -217,22 +224,16 @@ RUN cd openvino && \
   make -j 2
 
 # TODO move earlier
-RUN git clone https://github.com/Koromix/tytools \
-  && mkdir -p tytools/build \
-  && cd tytools/build \
+RUN wget https://github.com/Koromix/tytools/archive/refs/tags/v0.9.8.zip \
+  && unzip v0.9.8.zip \
+  && cd tytools-0.9.8 && mkdir build && cd build \
   && cmake .. \
   && make -j2
 
-# Get some basic packages in place
-#RUN cd ~/clare/ros/src/clare_head && pio pkg install
-
 USER root
-RUN cd tytools/build && make install
+RUN cd tytools-0.9.8/build && make install
 RUN usermod -a -G plugdev dgorissen
 USER dgorissen
-
-# TODO: move earlier
-RUN pip install transitions webcolors openai
 
 RUN echo -e '\n### \n\
 source ~/openvino/bin/setupvars.sh \n\
