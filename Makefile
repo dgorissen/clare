@@ -39,6 +39,23 @@ runosx:
 	-v ${clare_dir}:/home/ubuntu/clare \
 	tiryoh/ros-desktop-vnc:noetic
 
+runlinux:
+	docker run \
+	--platform=linux/arm/v7 \
+	--rm \
+	-v ${clare_dir}:/home/dgorissen/clare \
+	-h clare \
+	-p5000:5000 -p11311:11311 -p8080:8080 \
+	--privileged \
+	--network=host \
+	-e DISPLAY=${DISPLAY} \
+	-v /dev:/dev \
+	-v /opt/vc:/opt/vc \
+	-v /run/udev/data:/run/udev/data \
+	--env LD_LIBRARY_PATH=/opt/vc/lib \
+	--name clare \
+	dgorissen/clare:${tag} $(mode)
+
 runpi:
 	docker run \
 	--rm \
