@@ -2,7 +2,7 @@
 
 set -x
 
-LOCAL_IP=`hostname  -I | cut -f1 -d' '`
+LOCAL_IP=`hostname  -I | cut -f2 -d' '`
 
 CLARE=/home/dgorissen/clare
 LOGS=$CLARE/logs
@@ -13,10 +13,12 @@ rm -rf $LOGS/*
 run_mode=$1
 
 echo
+echo "--------------------------------------------"
 echo "* Current directory: " $(pwd)
 echo "* Local IP detected as ${LOCAL_IP}"
 echo "* Logs directory set to ${LOGS}"
 echo "* Run mode argument passed:" $run_mode
+echo "--------------------------------------------"
 echo
 
 # Setup environment
@@ -32,7 +34,7 @@ echo "* Starting roscore"
 
 export ROS_LOG_DIR=${LOGS}/ros
 # Start ROS master
-# export ROS_HOSTNAME=localhost
+export ROS_HOSTNAME=${LOCAL_IP}
 export ROS_MASTER_URI=http://${LOCAL_IP}:11311
 roscore -v --master-logger-level=info 2>&1 | tee $LOGS/roscore.txt &
 echo $! > $LOGS/roscore.pid
