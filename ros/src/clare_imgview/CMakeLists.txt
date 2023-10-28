@@ -10,14 +10,14 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_python_setup()
 
-add_message_files(
-   FILES
-)
+#add_message_files(
+#   FILES
+#)
 
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-)
+#generate_messages(
+#  DEPENDENCIES
+#  std_msgs
+#)
 
 catkin_package(
   CATKIN_DEPENDS
@@ -26,6 +26,6 @@ catkin_package(
 )
 
 catkin_install_python(PROGRAMS
-   nodes/fan_node.py
+   nodes/imgview_node.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
