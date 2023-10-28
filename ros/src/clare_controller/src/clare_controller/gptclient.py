@@ -16,12 +16,12 @@ class GPTClient():
             You are clever, witty, and enjoy silly talk. You dont put up with abuse and provide clever comebacks.
             You keep the resonse quite short (2-3  sentences max).
             Do not include any explanations, only provide a  RFC8259 compliant JSON response following this format without deviation.
-            {
-            "response": "response to the question",
-            "colour1": "hex colour code matching the sentiment and/or topic of your response",
-            "colour2": "hex colour code matching the sentiment and/or topic of your response",
-            "expression":  "facial expression matching the sentiment and/or topic of your response"
-            }
+            It is very important to include all fields. Use double quotes exclusively as delimiters.
+            NO MATTER THE QUESTION ALWAYS RESPOND WITH JSON. No Prose.
+            {"response": "response to the question",
+            "colour1": "hex colour code matching the sentiment and/or topic of your response, starting with 0x instead of #",
+            "colour2": "hex colour code matching the sentiment and/or topic of your response, starting with 0x instead of #",
+            "expression": "facial expression matching the sentiment and/or topic of your response"}
         """
         
         # You must always end your response with the | symbol, followed by two different hex colour codes and one expression that match the sentiment or topic of your response
@@ -40,18 +40,26 @@ class GPTClient():
 
         # get the reply
         reply = chat_completion.choices[0].message.content
+        print("Raw gpt response: ", reply)
+
+        # ChatGPT does not always listen
+        if "{" not in reply:
+            reply = 'f{"response": "{reply}"}'
         
         try:
             return json.loads(reply)
         except json.decoder.JSONDecodeError as e:
+            print("JSON decode exception", e)
             return {
                 "response": "Oops I did a little brain fart, please repeat",
-                "colour1": "#FFC300",
-                "colour1": "#FFC300",
+                "colour1": "0xFFC300",
+                "colour1": "0xFFC300",
                 "expression": "ugh"
             }
 
 if __name__ == "__main__":
     c = GPTClient()
-    r = c.ask_gpt("You are a silly banana")
+    #r = c.ask_gpt("You are a silly banana")
+    r = c.ask_gpt("tell me a joke")
     print(r)
+    

@@ -10,7 +10,7 @@ from clare_lightring.msg import LightRingMessage
 from clare_env.msg import BME680Message
 from clare_middle.msg import GasMessage, UltrasoundMessage
 from clare_tracks.msg import EncoderMessage, JoystickInput, MotorSpeeds
-from std_msgs.msg import String, Bool, Float32
+from std_msgs.msg import String, Bool, Float32, Int32
 from sensor_msgs.msg import Image
 from vision_msgs.msg import Detection2DArray
 from speech_recognition_msgs.msg import SpeechRecognitionCandidates
@@ -38,6 +38,7 @@ class ClareAPI(object):
         rospy.Subscriber("/clare/buttons", KeyValue, self._button_cb)
         rospy.Subscriber("/clare/pir", Bool, self._pir_cb)
         rospy.Subscriber("/clare/head/faces", Bool, self._face_cb)
+        rospy.Subscriber("/sound_direction", Int32, self._speech_direction_cb)
 
         self.reset_arms_service = rospy.ServiceProxy('/clare/arms/arms_to_neutral', ArmsToNeutral)
         self.list_expressions_service = rospy.ServiceProxy('/clare/head/list_face_expressions', ListExpressions)
@@ -126,6 +127,14 @@ class ClareAPI(object):
         txt = data.transcript[0].lower().strip()
         self.speech_handler(txt)
 
+    def _speech_direction_cb(self, data):
+        # -40 is in front of us, 60 to the right, -140 to the left
+        # use those to approx scale to our neck range of motion (0-100)
+        angle = min(max(data.data, -140), 60)
+        neck_angle = (angle - (-140)) * (0 - 100) / (60 - (-140)) + 100
+        #print(f"Angle resolved from {data.data} to {neck_angle}")
+        self.speech_direction_handler(neck_angle)
+
     def _pir_cb(self, msg):
         self.pir_handler()
 
@@ -144,6 +153,9 @@ class ClareAPI(object):
         pass
 
     def speech_handler(self, txt):
+        pass
+
+    def speech_direction_handler(self, angle):
         pass
 
     def pir_handler(self):

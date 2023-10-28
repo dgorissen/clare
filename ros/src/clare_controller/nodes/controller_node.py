@@ -52,6 +52,7 @@ transitions = [
     ['insult', States.listening, States.insulted],
     ['inlove', States.listening, States.love],
     ['chatgpt', States.listening, States.gpt],
+    ['gpterror', States.gpt, States.confused],
     ['to_idle', '*', States.idle]
 ]
 
@@ -63,6 +64,7 @@ class ClareController(ClareAPI):
         self.machine = Machine(model=self, states=States, transitions=transitions, initial=States.dummy)
         self._idle_timer = None
         self._gptclient = GPTClient()
+        self._speech_direction = 0
 
     def start(self) -> None:
         # Kick off state machine
@@ -87,8 +89,10 @@ class ClareController(ClareAPI):
             if s:
                 self.trigger(s)
             else:
-                #self.trigger("confused")
-                self.trigger("chatgpt", txt=txt)
+                try:
+                    self.trigger("chatgpt", txt=txt)
+                except Exception as e:
+                    self.trigger("gpterror")
         elif self.state == States.idle:
             if txt in ['hey clare', 'hey claire']:
                 rospy.loginfo("Trigger phrase detected")
@@ -97,6 +101,10 @@ class ClareController(ClareAPI):
                 pass
         else:
             pass
+
+    def speech_direction_handler(self, angle):
+        #rospy.loginfo(f"Speech angle detected: {angle}")
+        self._speech_direction = angle
 
     def on_enter_init(self):
         rospy.loginfo("Init state")
@@ -127,7 +135,7 @@ class ClareController(ClareAPI):
             self._idle_timer = None
 
         self.reset_neck()
-
+        
     def _idle_animation(self):
         if self.state != States.idle:
             return
@@ -144,9 +152,13 @@ class ClareController(ClareAPI):
         rospy.loginfo("GPT state")
         r = self._gptclient.ask_gpt(txt)
         rospy.loginfo(str(r))
-        self.set_expression(r["expression"])
-        self.set_ears(r["colour1"],r["colour1"],r["colour2"],r["colour2"])
-        self.speak(r.response)
+        e = r.get("expression", "confused")
+        c1 = r.get("colour1","0xff0000")
+        c2 = r.get("colour2",c1)
+        resp = r.get("response","Oops...I forgot...")
+        self.set_expression(e)
+        self.set_ears(c1,c1,c2,c2)
+        self.speak(resp)
         time.sleep(3)
         self.trigger("to_idle")
 
@@ -162,6 +174,7 @@ class ClareController(ClareAPI):
 
     def on_enter_listening(self):
         rospy.loginfo("Listening state")
+        self.set_neck(50,self._speech_direction)
         self.set_expression("sceptical")
         self.set_ears_from_cname("blue")
         self.set_lightring("blue")

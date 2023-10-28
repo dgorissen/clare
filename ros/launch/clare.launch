@@ -34,7 +34,7 @@
         <param name="language" value="en-GB" type="str"/>
     </node>
 
-    <include file="$(find realsense2_camera)/launch/rs_camera.launch"/>
+    <!--include file="$(find realsense2_camera)/launch/rs_camera.launch"/-->
 
     <!-- BODY MIDDLE ====================================================================== -->
     <node name="clare_middle" pkg="clare_middle" type="middle_node.py">
